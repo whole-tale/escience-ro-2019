@@ -1,0 +1,3329 @@
+<?xml version="1.0" encoding="iso-8859-1" ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
+<!--http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd-->  
+<html xmlns="http://www.w3.org/1999/xhtml"  
+> 
+<head> <title></title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+<meta name="generator" content="TeX4ht (http://www.tug.org/tex4ht/)" /> 
+<meta name="originator" content="TeX4ht (http://www.tug.org/tex4ht/)" /> 
+<!-- fn-in,html,xhtml --> 
+<meta name="src" content="escience-ro-2019.tex" /> 
+<link rel="stylesheet" type="text/css" href="escience-ro-2019.css" /> 
+</head><body 
+>
+                                                 
+                                                                                                  
+                                                                                                  
+<h1>Application of BagIt-Serialized Research Object Bundles for Packaging and Re-execution of Computational Analyses</span></h1>
+Kyle Chard, Computation Institute, University of Chicago, Chicago, IL, chard@uchicago.edu<br/>
+Niall Gaffney, Texas Advanced Computing Center, University of Texas at Austin, Austin, TX, ngaffney@tacc.utexas.edu,<br/>
+Matthew B. Jones, NCEAS, University of California at Santa Barbara, Santa Barbara, CA, jones@nceas.ucsb.edu<br/>
+Kacper Kowalik, NCSA, University of Illinois at Urbana-Champaign, Champaign, IL, kowalikk@illinois.edu<br/>
+Bertram Ludäscher, School of Information Sciences, University of Illinois at Urbana-Champaign, Champaign, IL, ludaesch@illinois.edu<br/>
+Jarek Nabrzyski, Center for Research Computing, University of Notre Dame, South Bend, IN, jaroslaw.nabrzyski.1@nd.edu<br/>
+Victoria Stodden, School of Information Sciences, University of Illinois at Urbana-Champaign, Champaign, IL, vcs@stodden.net<br/>
+Ian Taylor, Center for Research Computing, University of Notre Dame, South Bend, IN, ian.j.taylor@gmail.com<br/>
+Thomas Thelen, NCEAS, University of California at Santa Barbara, Santa Barbara, CA, thelen@nceas.ucsb.edu<br/>
+Matthew J. Turk, School of Information Sciences, University of Illinois at Urbana-Champaign, Champaign, IL, mjturk@illinois.edu<br/>
+Craig Willis, NCSA, University of Illinois at Urbana-Champaign, Champaign, IL, willis8@illinois.edu
+        
+                                                                                                  
+                                                                                                  
+<!--l. 101--><p class="indent" >  <span 
+class="ptmbi7t-x-x-90">Abstract</span><span 
+class="ptmb7t-x-x-90">&#8212;In this paper we describe our experience adopting the</span>
+<span 
+class="ptmb7t-x-x-90">Research Object Bundle (RO-Bundle) format with BagIt serialization</span>
+<span 
+class="ptmb7t-x-x-90">(BagIt-RO)  for  the  design  and  implementation  of  &#8220;tales&#8221;  in  the</span>
+<span 
+class="ptmb7t-x-x-90">Whole  Tale  platform.  A  </span><span 
+class="ptmbi7t-x-x-90">tale  </span><span 
+class="ptmb7t-x-x-90">is  an  executable  research  object</span>
+<span 
+class="ptmb7t-x-x-90">intended for the dissemination of computational scientific findings</span>
+<span 
+class="ptmb7t-x-x-90">that  captures  information  needed  to  facilitate  understanding,</span>
+<span 
+class="ptmb7t-x-x-90">transparency,  and  re-execution  for  review  and  computational</span>
+<span 
+class="ptmb7t-x-x-90">reproducibility at the time of publication. We describe the Whole</span>
+<span 
+class="ptmb7t-x-x-90">Tale  platform  and  requirements  that  led  to  our  adoption  of</span>
+<span 
+class="ptmb7t-x-x-90">BagIt-RO, specifics of our implementation, and discuss migrating to</span>
+<span 
+class="ptmb7t-x-x-90">the  emerging  Research  Object  Crate  (RO-Crate)  standard.</span>
+</p><!--l. 112--><p class="indent" >  <span 
+class="ptmbi7t-x-x-90">Index Terms</span><span 
+class="ptmb7t-x-x-90">&#8212;Reproducibility of results, Standards, Packaging,</span>
+<span 
+class="ptmb7t-x-x-90">Interoperability,  Software,  Digital  preservation</span>
+<a 
+ id="x1-2r1"></a>
+</p><!--l. 116--><p class="noindent" ><span 
+class="ptmrc7t-">I.  I<span 
+class="small-caps">n</span><span 
+class="small-caps">t</span><span 
+class="small-caps">r</span><span 
+class="small-caps">o</span><span 
+class="small-caps">d</span><span 
+class="small-caps">u</span><span 
+class="small-caps">c</span><span 
+class="small-caps">t</span><span 
+class="small-caps">i</span><span 
+class="small-caps">o</span><span 
+class="small-caps">n</span></span>
+<a 
+ id="Q1-1-0"></a>
+</p><!--l. 118--><p class="indent" >  Whole Tale (http://wholetale.org) is a web-based, open-source
+platform for reproducible research supporting the creation,
+sharing, execution, and verification of &#8220;tales&#8221; <span class="cite">&#x00A0;[<a 
+href="#Xbrinckman2019">2</a>,&#x00A0;<a 
+href="#Xchard2019">5</a>]</span>. Tales are
+executable research objects that capture the code, data, and
+environment along with narrative and workflow information
+needed to re-create computational results from scientific studies.
+A goal of the Whole Tale platform (WT) is to produce an archival
+package that is exportable, publishable, and can be used for
+verification of computational reproducibility, for example as part
+of the peer-review process.
+</p><!--l. 121--><p class="indent" >  Since its inception, the Whole Tale platform has been designed
+to bring together existing open science infrastructure. Researchers
+can ingest existing data from various scientific archival repositories;
+launch popular analytical tools (such as Jupyter and RStudio);
+create and customize computational environments (using
+<span 
+class="pcrr7t-">repo2docker</span><span class="footnote-mark"><a 
+href="#fn1x0" id="fn1x0-bk"><sup class="textsuperscript">1</sup></a></span><a 
+ id="x1-3f1"></a>);
+conduct analyses; create/upload code and data; and publish the
+resulting package back to an archival repository. Tales are also
+downloadable and re-executable locally, including the ability to
+retrieve remotely published data.
+</p><!--l. 129--><p class="indent" >  With the May 2019 release of version 0.7 of the platform
+we adopted the Research Object Bundle BagIt serialization
+(BagIt-RO) format <span class="cite">&#x00A0;[<a 
+href="#Xsoilandreyes2014">13</a>]</span>. By combining the BagIt-RO serialization
+with our repo2docker-based execution framework and the
+BDBag tools <span class="cite">&#x00A0;[<a 
+href="#Xchard2016">4</a>]</span>, we were able to define and implement a
+standards-compliant, self-describing, portable, re-executable
+research object with the ability to retrieve remotely published
+data.
+</p><!--l. 134--><p class="indent" >  In this paper we describe the Whole Tale platform and
+requirements that led to our adoption of the the BagIt-RO format.
+The paper is organized as follows. In section <a 
+href="#x1-4r2">II<!--tex4ht:ref: scenario --></a>, we present a
+motivating example of the use of the Whole Tale platform
+followed by a brief description of the system architecture in
+section <a 
+href="#x1-7r3">III<!--tex4ht:ref: architecture --></a>. In section <a 
+href="#x1-18r4">IV<!--tex4ht:ref: requirements --></a> we outline the requirements that led to
+our adoption of the BagIt-RO format. In section <a 
+href="#x1-19r5">V<!--tex4ht:ref: adopting --></a> we describe
+our implementation in more detail followed by a discussion and
+conclusions.
+</p><!--l. 142--><p class="indent" >
+<a 
+ id="x1-4r2"></a>                                                   </p><!--l. 142--><p class="noindent" ><span 
+class="ptmrc7t-">II.  E<span 
+class="small-caps">x</span><span 
+class="small-caps">a</span><span 
+class="small-caps">m</span><span 
+class="small-caps">p</span><span 
+class="small-caps">l</span><span 
+class="small-caps">e</span> <span 
+class="small-caps">s</span><span 
+class="small-caps">c</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">a</span><span 
+class="small-caps">r</span><span 
+class="small-caps">i</span><span 
+class="small-caps">o</span>: A<span 
+class="small-caps">n</span><span 
+class="small-caps">a</span><span 
+class="small-caps">l</span><span 
+class="small-caps">y</span><span 
+class="small-caps">z</span><span 
+class="small-caps">i</span><span 
+class="small-caps">n</span><span 
+class="small-caps">g</span> <span 
+class="small-caps">s</span><span 
+class="small-caps">e</span><span 
+class="small-caps">a</span><span 
+class="small-caps">l</span> <span 
+class="small-caps">m</span><span 
+class="small-caps">i</span><span 
+class="small-caps">g</span><span 
+class="small-caps">r</span><span 
+class="small-caps">a</span><span 
+class="small-caps">t</span><span 
+class="small-caps">i</span><span 
+class="small-caps">o</span><span 
+class="small-caps">n</span></span>
+  <span 
+class="ptmrc7t-"><span 
+class="small-caps">p</span><span 
+class="small-caps">a</span><span 
+class="small-caps">t</span><span 
+class="small-caps">t</span><span 
+class="small-caps">e</span><span 
+class="small-caps">r</span><span 
+class="small-caps">n</span><span 
+class="small-caps">s</span></span>
+  <a 
+ id="Q1-1-0"></a>
+  </p><!--l. 143--><p class="indent" >    We begin with a motivating example to illustrate the end-to-end
+  Whole Tale workflow for creating, exporting, and publishing
+  a tale based on existing data archived using the Research
+  Workspace<span class="footnote-mark"><a 
+href="#fn2x0" id="fn2x0-bk"><sup class="textsuperscript">2</sup></a></span><a 
+ id="x1-5f2"></a>,
+  a DataONE member node. This example is based tutorial material
+  described in <span class="cite">&#x00A0;[<a 
+href="#Xlondon2018">12</a>]</span>.
+  </p><!--l. 145--><p class="indent" >
+           A research team is preparing to publish a manuscript
+          describing  a  computational  model  for  estimating
+          animal  movement  paths  from  telemetry  data.  The
+          source  data  for  their  analysis,  tracking  data  for
+          juvenile  seals  in  Alaska<span class="cite">&#x00A0;[<a 
+href="#Xcameron2018">3</a>]</span>,  has  been  published  in
+          Research Workspace, a DataONE network member.
+          Using   the   Whole   Tale   platform,   the   researchers
+          register the external dataset. They then create a new
+          tale by launching an RStudio environment based on
+          images maintained by the Rocker Project <span class="cite">&#x00A0;[<a 
+href="#Xboettiger2018">1</a>]</span>. Using
+          the  interactive  environment,  they  clone  a  Github
+          repository,   modify   an   R   Markdown   document,
+          customize  the  environment  by  specifying  OS  and
+          R   packages   via   repo2docker   configuration   files,
+          and  execute  their  code  to  generate  outputs.  They
+          download  the  package  in  a  compressed  BagIt-RO
+          format  and  run  locally  to  verify  their  tale.  Finally,
+          they enter descriptive metadata and publish the final
+          package  back  to  DataONE  to  archive  the  package
+          and   obtain   a   persistent   identifier   to   include   in
+          publication.
+  </p><!--l. 159--><p class="indent" >    This scenario is further illustrated in Figure <a 
+href="#x1-4r2">II<!--tex4ht:ref: workflow --></a>.
+                                                                                                  
+                                                                                                  
+</p><!--l. 163--><p class="indent" >  </p><hr class="float" /><div class="float" 
+>
+                                                 
+                                                                                                  
+                                                                                                  
+ <img 
+src="images/wholetale-workflow-.png" alt="PIC"  width=500px
+									 /> <br/><a 
+ id="x1-6r1"></a>
+              <span 
+class="ptmr7t-x-x-80">Fig.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;1.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Example Scenario Tale Creation and Publishing Workflow, republished from </span><span class="cite"><span 
+class="ptmr7t-x-x-80">&#x00A0;[</span><a 
+href="#Xchard2019"><span 
+class="ptmr7t-x-x-80">5</span></a><span 
+class="ptmr7t-x-x-80">]</span></span><span 
+class="ptmr7t-x-x-80">, permission needed.</span>
+                                                 
+                                                                                                  
+                                                                                                  
+  </div><hr class="endfloat" />
+<a 
+ id="x1-7r3"></a>
+<!--l. 169--><p class="noindent" ><span 
+class="ptmrc7t-">III.  S<span 
+class="small-caps">y</span><span 
+class="small-caps">s</span><span 
+class="small-caps">t</span><span 
+class="small-caps">e</span><span 
+class="small-caps">m</span> <span 
+class="small-caps">a</span><span 
+class="small-caps">r</span><span 
+class="small-caps">c</span><span 
+class="small-caps">h</span><span 
+class="small-caps">i</span><span 
+class="small-caps">t</span><span 
+class="small-caps">e</span><span 
+class="small-caps">c</span><span 
+class="small-caps">t</span><span 
+class="small-caps">u</span><span 
+class="small-caps">r</span><span 
+class="small-caps">e</span></span>
+<a 
+ id="Q1-1-1"></a>
+</p><!--l. 171--><p class="indent" >  This section provides a brief overview of the Whole Tale
+system architecture illustrated in Figure <a 
+href="#x1-7r3">III<!--tex4ht:ref: architecture --></a>. Whole Tale provides a
+scalable platform based on the Docker Swarm container
+orchestration system, exposing a set of core services via REST
+APIs and Single Page Application (SPA). Key components
+include:
+</p>
+  <hr class="figure" /><div class="figure" 
+>
+                                                 
+                                                                                                  
+                                                                                                  
+                                                 
+                                                                                                  
+                                                                                                  
+<!--l. 178--><p class="noindent" ><img 
+src="images/wholetale-architecture.png" alt="PIC"  width=500px
+										/> <br/><a 
+ id="x1-8r2"></a>
+           <span 
+class="ptmr7t-x-x-80">Fig.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;2.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Whole Tale system architecture</span>
+                                                 
+                                                                                                  
+                                                                                                  
+</p>
+  </div><hr class="endfigure" />
+    <ul class="itemize1">
+    <li class="itemize"><span 
+class="ptmb7t-">Whole   Tale   Dashboard</span>:   An   Ember.js   single   page
+    application
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Whole    Tale    API</span>:   A   REST   API   built   using   the
+    Girder<span class="footnote-mark"><a 
+href="#fn3x0" id="fn3x0-bk"><sup class="textsuperscript">3</sup></a></span><a 
+ id="x1-9f3"></a>
+    framework      to      expose      key      features      including
+    authentication,   user/group   management,   tale   lifecycle,
+    data     management,     and     integration     with     remote
+    repositories
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Whole Tale File System</span>: A custom filesystem based on
+    WebDav  and  FUSE  used  to  mount  user  and  registered
+    data into running container environments
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Image  registry</span>:  A  local  Docker  registry  used  to  host
+    images associated with tales
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Jobs  and  task  Management</span>:  A  task  distribution  and
+    notification framework based on Girder and Celery
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Data Management System (DMS)</span>: System for fetching,
+    caching, and exposing externally published datasets</li></ul>
+<!--l. 192--><p class="indent" >  Several aspects of the Whole Tale system are related to the
+BagIt-RO serialization format including filesystem organization,
+user-defined environments, metadata as well as the export
+and publication functions. We describe these in more detail
+below.
+<a 
+ id="x1-10r1"></a>
+</p><!--l. 195--><p class="indent" >  Each tale has a <span 
+class="ptmri7t-">workspace </span>(folder) that contains user-created code,
+data, workflow, documentation and narrative information. The
+workspace also contains repo2docker-compatible configuration
+files defining the tale environment, described below. This appears
+as the <span 
+class="pcrr7t-">workspace </span>folder mounted into the running tale
+environment.
+</p><!--l. 197--><p class="indent" >
+<a 
+ id="x1-11r2"></a>
+</p><!--l. 198--><p class="indent" >  Optionally, each tale can include references to externally
+published data. The data is then registered with the Whole Tale
+system and managed by the DMS. Externally referenced data
+appears in the <span 
+class="pcrr7t-">data </span>folder, a sibling to the <span 
+class="pcrr7t-">workspace</span>.
+</p><!--l. 200--><p class="indent" >
+<a 
+ id="x1-12r3"></a>
+</p><!--l. 201--><p class="indent" >  Users  can  optionally  customize  the  tale  environment
+using  repo2docker-compatible  configuration
+files.  Whole  Tale  extends  repo2docker  via  the
+<span 
+class="pcrr7t-">repo2docker</span><span 
+class="pcrr7t-">_wholetale</span><span class="footnote-mark"><a 
+href="#fn4x0" id="fn4x0-bk"><sup class="textsuperscript">4</sup></a></span><a 
+ id="x1-13f4"></a>
+package, which adds buildpacks to support Rocker, Spark, and
+OpenRefine images.
+</p><!--l. 203--><p class="indent" >
+<a 
+ id="x1-14r4"></a>
+</p><!--l. 205--><p class="indent" >  Tales have basic descriptive metadata including creator, authors,
+title, description, keywords as well as information about the
+selected environment, licenses, and associated persistent       identifiers. The tale metadata is included in the metadata directory
+  both in the <span 
+class="pcrr7t-">manifest.json </span>and <span 
+class="pcrr7t-">environment.json </span>files.
+  The license is included in the BagIt payload directory, but not as
+  part of the tale workspace.
+  </p><!--l. 208--><p class="indent" >
+  <a 
+ id="x1-15r5"></a>
+  </p><!--l. 210--><p class="indent" >    Tales can be exported in a BagIt-RO serialized archive that
+  contains the contents of the tale workspace (code, local data,
+  narrative, workflow, repo2docker configuration files) as well as
+  references to external data, tale metadata, and a script to run the
+  tale locally. BDBag <span class="cite">&#x00A0;[<a 
+href="#Xchard2016">4</a>]</span> is used to materialize &#8220;holey&#8221; bags by
+  downloading files specified in the <span 
+class="pcrr7t-">fetch.txt </span>file, initially via
+  HTTP and eventually via DOI, Globus, Agave schemes. The
+  script to run locally is stored at the root of the exported BagIt
+  archive.
+  </p><!--l. 213--><p class="indent" >    Table 1 describes the contents of an exported tale in the
+  BagIt-RO  format.  A  complete  example  is  available  at
+  <a 
+href="https://doi.org/10.5281/zenodo.2641314" >https://doi.org/10.5281/zenodo.2641314</a>.
+                                                                                                  
+                                                                                                  
+</p><!--l. 218--><p class="indent" >  </p><hr class="float" /><div class="float" 
+>
+                                                 
+                                                                                                  
+                                                                                                  
+<div class="center" 
+>
+<!--l. 218--><p class="noindent" >
+</p>
+<div class="tabular"> <table id="TBL-1" class="tabular" 
+cellspacing="0" cellpadding="0"  
+><colgroup id="TBL-1-1g"><col 
+id="TBL-1-1" /></colgroup><colgroup id="TBL-1-2g"><col 
+id="TBL-1-2" /></colgroup><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-1-"><td  style="white-space:normal; text-align:left;" id="TBL-1-1-1"  
+class="td11"><!--l. 221--><p class="noindent" ><span 
+class="ptmb7t-x-x-80">File</span>                                           </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-1-2"  
+class="td11"><!--l. 221--><p class="noindent" ><span 
+class="ptmb7t-x-x-80">Description</span>                                            </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-2-"><td  style="white-space:normal; text-align:left;" id="TBL-1-2-1"  
+class="td11"><!--l. 222--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">bag-info.txt</span>         </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-2-2"  
+class="td11"><!--l. 222--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Bag          metadata          using          the</span>
+<span 
+class="ptmr7t-x-x-80">bdbag-ro-profile</span><span class="footnote-mark"><a 
+href="#fn5x0" id="fn5x0-bk"><sup class="textsuperscript">5</sup></a></span><a 
+ id="x1-16f5"></a> </p> </td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-3-"><td  style="white-space:normal; text-align:left;" id="TBL-1-3-1"  
+class="td11"><!--l. 223--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">bagit.txt</span>            </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-3-2"  
+class="td11"><!--l. 223--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Bag declaration</span>                                      </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-4-"><td  style="white-space:normal; text-align:left;" id="TBL-1-4-1"  
+class="td11"><div class="minipage"><div class="verbatim" id="verbatim-1">
+&#x00A0;<br />data/
+&#x00A0;<br />&#x00A0;&#x00A0;LICENSE
+&#x00A0;<br />&#x00A0;&#x00A0;workspace/
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;apt.txt
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;postBuild
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;requirements.txt
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;wt_quickstart.ipynb
+</div>
+<!--l. 235--><p class="nopar" >
+</p></div>                        </td><td  style="white-space:normal; text-align:left;" id="TBL-1-4-2"  
+class="td11"><!--l. 237--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Payload                                     directory</span>
+<span 
+class="ptmr7t-x-x-80">containing  tale  license  and  workspace</span>
+<span 
+class="ptmr7t-x-x-80">contents        including        repo2docker</span>
+<span 
+class="ptmr7t-x-x-80">compatible configuration files.</span>              </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-5-"><td  style="white-space:normal; text-align:left;" id="TBL-1-5-1"  
+class="td11"><!--l. 238--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">fetch.txt</span>            </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-5-2"  
+class="td11"><!--l. 238--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Fetch file</span>                                                 </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-6-"><td  style="white-space:normal; text-align:left;" id="TBL-1-6-1"  
+class="td11"><!--l. 239--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">manifest-[md5,</span>
+<span 
+class="pcrr7t-x-x-80">sha256].txt</span>          </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-6-2"  
+class="td11"><!--l. 239--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Payload manifest (checksums)</span>              </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-7-"><td  style="white-space:normal; text-align:left;" id="TBL-1-7-1"  
+class="td11"><div class="minipage"><div class="verbatim" id="verbatim-2">
+&#x00A0;<br />metadata/
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;manifest.json
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;environment.json
+</div>
+<!--l. 247--><p class="nopar" >
+</p></div>                        </td><td  style="white-space:normal; text-align:left;" id="TBL-1-7-2"  
+class="td11"><!--l. 249--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Tag</span>
+<span 
+class="ptmr7t-x-x-80">directory  containing  RO  manifest.json</span>
+<span 
+class="ptmr7t-x-x-80">and  Whole  Tale  environment  metadata</span>
+<span 
+class="ptmr7t-x-x-80">(required by repo2docker</span><span 
+class="ptmr7t-x-x-80">_wholetale)</span>    </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-8-"><td  style="white-space:normal; text-align:left;" id="TBL-1-8-1"  
+class="td11"><!--l. 250--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">tagmanifest-[md5,</span>
+<span 
+class="pcrr7t-x-x-80">sha256].txt</span>          </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-8-2"  
+class="td11"><!--l. 250--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Tag manifest (checksums)</span>                     </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-9-"><td  style="white-space:normal; text-align:left;" id="TBL-1-9-1"  
+class="td11"><!--l. 251--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">README.md</span>            </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-9-2"  
+class="td11"><!--l. 251--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Tale top-level readme</span>                             </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-10-"><td  style="white-space:normal; text-align:left;" id="TBL-1-10-1"  
+class="td11"><!--l. 252--><p class="noindent" ><span 
+class="pcrr7t-x-x-80">run-local.sh</span>         </p></td><td  style="white-space:normal; text-align:left;" id="TBL-1-10-2"  
+class="td11"><!--l. 252--><p class="noindent" ><span 
+class="ptmr7t-x-x-80">Tale local execution script</span>                     </p></td>
+</tr><tr 
+class="hline"><td><hr /></td><td><hr /></td></tr><tr  
+ style="vertical-align:baseline;" id="TBL-1-11-"><td  style="white-space:normal; text-align:left;" id="TBL-1-11-1"  
+class="td11">                     </td></tr></table></div>
+<a 
+ id="x1-17r1"></a>
+<span 
+class="ptmr7t-x-x-80">TABLE</span><span 
+class="ptmr7t-x-x-80">&#x00A0;I</span><br />
+<span 
+class="ptmrc7t-x-x-80">E<span 
+class="small-caps">x</span><span 
+class="small-caps">p</span><span 
+class="small-caps">o</span><span 
+class="small-caps">r</span><span 
+class="small-caps">t</span><span 
+class="small-caps">e</span><span 
+class="small-caps">d</span> <span 
+class="small-caps">t</span><span 
+class="small-caps">a</span><span 
+class="small-caps">l</span><span 
+class="small-caps">e</span> <span 
+class="small-caps">c</span><span 
+class="small-caps">o</span><span 
+class="small-caps">n</span><span 
+class="small-caps">t</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">t</span><span 
+class="small-caps">s</span></span>
+</div>
+                                                 
+                                                                                                  
+                                                                                                  
+  </div><hr class="endfloat" />
+<a 
+ id="x1-18r4"></a>
+<!--l. 262--><p class="noindent" ><span 
+class="ptmrc7t-">IV.  R<span 
+class="small-caps">e</span><span 
+class="small-caps">q</span><span 
+class="small-caps">u</span><span 
+class="small-caps">i</span><span 
+class="small-caps">r</span><span 
+class="small-caps">e</span><span 
+class="small-caps">m</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">t</span><span 
+class="small-caps">s</span></span>
+<a 
+ id="Q1-1-3"></a>
+</p><!--l. 263--><p class="indent" >  The scenario described in section <a 
+href="#x1-4r2">II<!--tex4ht:ref: scenario --></a> highlights several key
+requirements of the Whole Tale platform that led to our
+selection of the BagIt-RO serialization. These requirements
+include:
+</p>
+    <ul class="itemize1">
+    <li class="itemize"><span 
+class="ptmb7t-">Interoperability with archival repositories</span>: Since tales
+    will   be   published   to   archival   repositories   including
+    DataONE  network  members,  we  must  adopt  standard
+    formats  and  vocabularies  that  facilitate  interoperability.
+    This  includes  the  use  of  supported  archival  formats  and
+    identifiers  (e.g.,  digital  object  identifiers).  We  also  note
+    here  that  some  repositories  do  not  support  publishing
+    hierarchical  file  structures,  while  many  research  objects
+    contain data and code organized in folders. In the future,
+    we  plan  to  support  publishing  to  Dataverse  network
+    members, the Dryad repository, and Zenodo.
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Interoperability    with    source    code    management</span>
+    <span 
+class="ptmb7t-">(SCM)</span>:  For  many  researchers,  source  code  repositories
+    such  as  GitHub  are  central  to  their  workflow  in  the
+    creation of research objects. The tale format must support
+    publishing  research  objects  based  on  content  in  SCM
+    repositories.
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Ability  to  reference  external  data</span>:  A  central  feature
+    of  the  Whole  Tale  platform  is  to  enable  researchers  to
+    reference externally published data by persistent identifier
+    and  include  references  to  those  items  in  their  published
+    tales.  Both  in  the  Whole  Tale  web  service  and  when
+    executed   locally,   externally   referenced   data   must   be
+    resolved   prior   to   re-execution.   Whole   Tale   currently
+    supports HTTP resources as well as those published via
+    Globus and in the future via the Agave Platform.
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Ability    to    add    metadata</span>:   The   tale   format   must
+    support all metadata attributes required by DataCite and
+    schema.org  as  well  as  attributes  specific  to  the  Whole
+    Tale  platform.  In  the  future,  we  expect  to  also  support
+    additional  metadata  required  by  researchers  in  specific
+    domains.
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Ability  to  export  and  re-execute</span>:  One  feature  of  the
+    system  is  the  ability  for  users  to  export  tales  to  a  local
+    machine.  To  re-run  locally,  we  must  be  able  to  rebuild
+    the environment (e.g., via Docker/repo2docker) and fetch
+    remote data as needed.
+    </li>
+    <li class="itemize"><span 
+class="ptmb7t-">Ability    to    store    provenance    information</span>:   Future
+    releases of Whole Tale, tales will include computational           and archival provenance information.
+          </li>
+          <li class="itemize"><span 
+class="ptmb7t-">Simplicity and understandability</span>: When users view the
+          contents of an exported or published tale, they should be
+          able to easily understand the contents and how to explore
+          or re-execute the tale.
+          </li>
+          <li class="itemize"><span 
+class="ptmb7t-">Verifiability</span>: Future releases of Whole Tale will include
+          information   to   allow   the   automatic   re-execution   and
+          verification of included results/outputs and computational
+          workflows.
+          </li>
+          <li class="itemize"><span 
+class="ptmb7t-">Versioning</span>: Since researchers iterate on their tales, share
+          them and extend them, it is important to be able to version
+          them over time.
+          </li>
+          <li class="itemize"><span 
+class="ptmb7t-">Interoperability  with  search  engines</span>:  Google  recently
+          unveiled  Dataset  Search  which  parses  and  aggregates
+          JSON-LD embedded on dataset landing pages as an effort
+          to lower barriers for finding datasets. Choosing JSON-LD
+          as  a  representation  for  tale  metadata  provides  flexibility
+          in case we decide to expose tale information for Google.
+          It  also  allows  for  further  integration  with  third  party
+          publishers  such  as  Dataverse  and  DataONE  who  may
+          expose such metadata for Google.</li></ul>
+  <!--l. 279--><p class="indent" >
+  <a 
+ id="x1-19r5"></a>
+  </p><!--l. 279--><p class="noindent" ><span 
+class="ptmrc7t-">V.  A<span 
+class="small-caps">d</span><span 
+class="small-caps">o</span><span 
+class="small-caps">p</span><span 
+class="small-caps">t</span><span 
+class="small-caps">i</span><span 
+class="small-caps">n</span><span 
+class="small-caps">g</span> <span 
+class="small-caps">t</span><span 
+class="small-caps">h</span><span 
+class="small-caps">e</span> B<span 
+class="small-caps">a</span><span 
+class="small-caps">g</span>I<span 
+class="small-caps">t</span>-RO M<span 
+class="small-caps">o</span><span 
+class="small-caps">d</span><span 
+class="small-caps">e</span><span 
+class="small-caps">l</span></span>
+  <a 
+ id="Q1-1-3"></a>
+  </p><!--l. 281--><p class="indent" >    Whole Tale uses the RDF data model to encode tale information
+  for export and exchange. We selected a JSON-LD representation
+  for human readability, extensibility, compatibility with Whole Tale
+  APIs, and potential interoperability with search engines and third
+  party publishers. After developing an ad-hoc internal format, we
+  explored emerging standards in the research object space
+  and settled on BagIt-RO for serialization. Using RO-Bundle
+  specification and BagIt serialization in conjunction with the
+  BDBag tools met many of our initial requirements. Additional tale
+  metadata attributes which were not included in the BagIt-RO
+  model could be added using vocabularies such as schema.org.
+  Throughout this section, we use the <span 
+class="pcrr7t-">manifest.json </span>from the
+  above example, with a complete listing included in Appendix
+  A.
+  </p><!--l. 283--><p class="indent" >
+  <a 
+ id="x1-20r1"></a>
+  </p><!--l. 283--><p class="noindent" ><span 
+class="ptmri7t-">A.  Filesystem Artifacts</span>
+  <a 
+ id="Q1-1-3"></a>
+  </p><!--l. 284--><p class="indent" >    One strong point of RO-Bundle is that it treats file system
+  artifacts as aggregates of the manifest. Doing so satisfies
+  our requirement of being able to track where files belong,
+  enabling us to both export and re-import tales even in the
+  case where we must publish a hierarchical structure to a
+  repository that can only represent a flat structure. In the case of
+  Whole Tale, artifacts include data that were retrieved from
+  external repositories as well as files that the user created or
+                                                                                                  
+                                                                                                  
+uploaded into the tale workspace. The tale workspace contents
+are included in the payload &#8221;data/workspace&#8221; directory and
+the external data are fetched into the payload &#8221;data/data&#8221;
+directory, mirroring filesystem organization on the web-based
+platform.
+</p>
+  <!--l. 290-->
+<div class="lstlisting" id="listing-1"><span class="label"><a 
+ id="x1-21r1"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">aggregates</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-22r2"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-23r3"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">wt_quickstart</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">ipynb</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-24r4"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-25r5"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-26r6"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">apt</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">txt</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-27r7"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-28r8"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">]</span>
+  </div>
+<!--l. 301--><p class="indent" >  Workspace artifacts are easily described with a single URI
+entry. Some files, such as the system generated README.md, are
+tagged with additional metadata as shown below. In this case
+the additional metadata specifies the &#8220;type&#8221; of the file as a
+&#8220;HowTo&#8221;.
+</p>
+  <!--l. 305-->
+<div class="lstlisting" id="listing-2"><span class="label"><a 
+ id="x1-29r1"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-30r2"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">HowTo</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-31r3"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">README</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">md</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-32r4"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span>
+  </div>
+<!--l. 312--><p class="indent" >
+<a 
+ id="x1-33r2"></a>
+</p><!--l. 312--><p class="noindent" ><span 
+class="ptmri7t-">B.  External data</span>
+<a 
+ id="Q1-1-3"></a>
+</p><!--l. 314--><p class="indent" >  Whole Tale supports two types of external data: data that
+reside in a repository identified by persistent identifier (e.g.,
+DOI) and data that exists at a generic HTTP address. In
+addition to including information about external data in the
+<span 
+class="pcrr7t-">manifest.json</span>, the URL for each remote file, regardless of
+type, is included in the <span 
+class="pcrr7t-">fetch.txt </span>for retrieval using BDBag
+tools.
+</p><!--l. 317--><p class="indent" >  <span 
+class="ptmb7t-">Generic  HTTP  Data</span>: For data that does not belong to a
+remote repository, a simple bundle is created in the aggregation
+section. The URI points to the HTTP address where the file
+may be retrieved and the bundle object holds the filesystem
+relevant information. The combination of information allows us
+to retrieve the file and place it in the correct folder (i.e.,
+data/data).
+</p><!--l. 320--><p class="indent" >  <span 
+class="ptmb7t-">Repository Data</span>: For datasets that have been published to
+research repositories, additional metadata can be ingested when
+files  are  registered  with  the  system.  The  individual  files
+are described with a single bundle object, and linked to
+an additional structure that describes the dataset in more
+detail.
+</p><!--l. 323--><p class="indent" >  The following snippet describes a remote dataset that resides in
+DataONE and the aggregation recording the relationship between
+a file in that dataset and its ultimate location after retrieval in the
+payload &#8221;data&#8221; directory:
+</p>
+  <!--l. 327-->
+<div class="lstlisting" id="listing-3"><span class="label"><a 
+ id="x1-34r1"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">dataset</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-35r2"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Dataset</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-36r3"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">identifier</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-37r4"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">name</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Humans</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">and</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Hydrology</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">at</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">High</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Latitudes</span><span 
+class="pcrr7t-x-x-70">...",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-38r5"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-39r6"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">],</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-40r7"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">aggregates</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-41r8"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-42r9"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">size</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">1558016,</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-43r10"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">isPartOf</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-44r11"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">cn</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">dataone</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">cn</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">v2</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">resolve</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">urn</span><span 
+class="pcrr7t-x-x-70">:...",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-45r12"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">bundledAs</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-46r13"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">filename</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">usco2000</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">xls</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-47r14"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">folder</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-48r15"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-49r16"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-50r17"></a></span><span 
+class="pcrr7t-x-x-70">]</span>
+  </div>
+<!--l. 347--><p class="indent" >                                                  <a 
+ id="x1-51r3"></a>
+ </p><!--l. 347--><p class="noindent" ><span 
+class="ptmri7t-">C.  Describing the Computing Environment</span>
+  <a 
+ id="Q1-1-3"></a>
+  </p><!--l. 348--><p class="indent" >    Whole  Tale  uses  a  customized  version  of  the  Binder
+  repo2docker package. In addition to including configuration files
+  in the workspace, Whole Tale exports information about the
+  environment including runtime information in the tale. One
+  shortcoming of the BagIt-RO model is that there is not a
+  well-defined place for this metadata. To address this need, we
+  define an additional tag file, <span 
+class="pcrr7t-">environment.json</span>, which
+  encodes sufficient information about the environment so that it
+  can be re-created. The metadata contained in this file is
+  represented as JSON and is not described using standard
+  vocabularies.
+  </p><!--l. 350--><p class="indent" >
+  <a 
+ id="x1-52r4"></a>
+  </p><!--l. 350--><p class="noindent" ><span 
+class="ptmri7t-">D.  Describing Additional Attributes</span>
+  <a 
+ id="Q1-1-3"></a>
+  </p><!--l. 351--><p class="indent" >    A number of properties that describe additional tale attributes
+  (e.g., authors, keywords, description, license) are defined at the
+  manifest root. Schema.org&#8217;s vocabulary sufficed for describing
+  these general metadata fields.
+  </p><!--l. 353--><p class="indent" >    Attributing authorship to a tale is a requirement for tracking
+  researcher contributions and is also used during metadata
+  generation with publishers. The Provenance, Authoring, and
+  Versioning (PAV) vocabulary is used instead of schema because it
+  is already included in by RO-Bundle:
+  </p>
+      <!--l. 355-->
+  <div class="lstlisting" id="listing-4"><span class="label"><a 
+ id="x1-53r1"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-54r2"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">orcid</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/0000-0002-7523-5539",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-55r3"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">Person</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-56r4"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">familyName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">DeBruine</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-57r5"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">givenName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Lisa</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-58r6"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span>
+ 
+  </div>
+<!--l. 365--><p class="indent" >
+<a 
+ id="x1-59r5"></a>
+</p><!--l. 365--><p class="noindent" ><span 
+class="ptmri7t-">E.  Provenance Tracking</span>
+<a 
+ id="Q1-1-3"></a>
+</p><!--l. 367--><p class="indent" >    A planned feature of Whole Tale is the ability to track
+executions and steps in researchers&#8217; workflows, which we call
+computational provenance. The BagIt-RO model includes
+the ability to provide provenance information through the
+inclusion of the <span 
+class="pcrr7t-">provenance.json </span>file. However, this is
+intended to capture more archival provenance information
+and it is unclear whether computational provenance should
+be included here. Whole Tale plans to use the Prov-ONE
+ontology<span class="footnote-mark"><a 
+href="#fn6x0" id="fn6x0-bk"><sup class="textsuperscript">6</sup></a></span><a 
+ id="x1-60f6"></a>, an extension
+to W3C PROV<span class="footnote-mark"><a 
+href="#fn7x0" id="fn7x0-bk"><sup class="textsuperscript">7</sup></a></span><a 
+ id="x1-61f7"></a>.
+</p><!--l. 369--><p class="indent" >    The URI of each file in the manifest can be referenced inside
+the  <span 
+class="pcrr7t-">provenance.json </span>file,  enabling  rich  linkings  of
+information. This information can also be transcribed to
+publisher-specific formats, provided that they support PROV.
+Figure <a 
+href="#x1-62r3">3<!--tex4ht:ref: prov-fig --></a> illustrates how provenance information is rendered in
+DataONE.
+</p>
+    <hr class="figure" /><div class="figure" 
+>
+                                                                                                  
+                                                                                                  
+                                                 
+                                                                                                  
+                                                                                                  
+<!--l. 373--><p class="noindent" ><img width=500px
+src="images/dataone-prov.png" alt="PIC"  
+							  /><br/> <a 
+ id="x1-62r3"></a>
+       <span 
+class="ptmr7t-x-x-80">Fig.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;3.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Provenance rendering of a file in DataONE</span>
+                                                 
+                                                                                                  
+                                                                                                  
+</p>
+  </div><hr class="endfigure" />
+<a 
+ id="x1-63r6"></a>
+<!--l. 379--><p class="noindent" ><span 
+class="ptmrc7t-">VI.  D<span 
+class="small-caps">i</span><span 
+class="small-caps">s</span><span 
+class="small-caps">c</span><span 
+class="small-caps">u</span><span 
+class="small-caps">s</span><span 
+class="small-caps">s</span><span 
+class="small-caps">i</span><span 
+class="small-caps">o</span><span 
+class="small-caps">n</span></span>
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 381--><p class="indent" >  In this section, we highlight and discuss several issues related
+to our implementation of BagIt-RO that we hope will be of
+interest to workshop participants and possible input into current
+work on the RO-Crate specification. We discuss the importance of
+re-executability; the ability to reference and retrieve external data;
+the relationship between tales and source control repositories; and
+our ongoing work on computational provenance and verification
+workflows.
+</p><!--l. 383--><p class="indent" >
+<a 
+ id="x1-64r1"></a>
+</p><!--l. 383--><p class="noindent" ><span 
+class="ptmri7t-">A.  Executable research objects</span>
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 384--><p class="indent" >  Tales are executable research objects. By this we mean that the
+research object itself may be built and re-executed for exploration,
+re-use, reproducibility, and verification. This is not a unique
+capability as many systems have recently been developed to
+support the creation of similar artifacts (for example Binder,
+CodeOcean). Executable research objects contain not only data,
+code, and documentation, but also information about the
+computational environment. This executability leads to additional
+capabilities, such as generation and comparison of computational
+provenance or methods of automated verification.
+</p><!--l. 386--><p class="indent" >  The FAIRDOM infrastructure initiative has made use of the
+Research Object framework to employ a standards based method
+to group its components into container platforms including BagIt <span class="cite">
+&#x00A0;[<a 
+href="#XStanford2016">14</a>]</span>. We extend this approach into the Whole Tale framework
+and include the capability for externally referenced data and
+general research pipelines. Our efforts are more general than
+ReproZip, which gathers and bundles dependencies for command
+line executions <span class="cite">&#x00A0;[<a 
+href="#XChirigati2016">6</a>]</span>. The Collective Knowledge (CK) framework
+gathers research objects with unique IDs and metadata in the
+JSON format but does not ensure re-executability <span class="cite">&#x00A0;[<a 
+href="#Xfursin2018">11</a>]</span>. Sciunits
+on the other hand are self-contained bundles guaranteed to
+re-execute regardless of deployment, and targeted at scientific
+experiments <span class="cite">&#x00A0;[<a 
+href="#XThat2017">21</a>,&#x00A0;<a 
+href="#XYuan2018">22</a>]</span>.
+</p><!--l. 388--><p class="indent" >
+<a 
+ id="x1-65r2"></a>
+</p><!--l. 388--><p class="noindent" ><span 
+class="ptmri7t-">B.  External data</span>
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 389--><p class="indent" >  In the Whole Tale platform, users are presented with a fixed
+filesystem hierarchy that includes &#8220;workspace&#8221; and &#8220;data&#8221;
+directories. The workspace directory contains code, local data,
+and additional files (e.g., documentation) and the sibling
+&#8221;data&#8221; directory contains externally referenced data files
+(read-only).
+</p><!--l. 391--><p class="indent" >  In our v0.7 release, the BagIt payload directory of an exported
+tale similarly contains &#8220;workspace&#8221; and &#8220;data&#8221; directories. The
+<span 
+class="pcrr7t-">manifest.json </span>contains information about remotely registered
+datasets that is also included in the BagIt <span 
+class="pcrr7t-">fetch.txt</span>. When BDBag tools are used to fetch remote datasets, they are
+ downloaded to the payload/data directory, matching the online
+ filesystem organization and system capabilities. The concept of
+ the <span 
+class="pcrr7t-">fetch.txt</span>, while primitive, is surprisingly effective when
+ used with BDBag. We also foresee taking advantage of other
+ BDBag capabilities, such as transferring Globus data or using
+ DOI resolution. However, there is redundancy in tracking external
+ information in both in the BagIt <span 
+class="pcrr7t-">fetch.txt </span>and the RO
+ manifest.json.
+ </p><!--l. 393--><p class="indent" >
+ <a 
+ id="x1-66r3"></a>
+ </p><!--l. 393--><p class="noindent" ><span 
+class="ptmri7t-">C.  Relationship to SCM</span>
+ <a 
+ id="Q1-1-4"></a>
+ </p><!--l. 394--><p class="indent" >  Many researchers use source control repositories (e.g., GitHub)
+ to organize and collaborate on research projects. Repositories
+ can be released and published via external tools such as
+ Zenodo or Whole Tale. In the Whole Tale platform, the
+ &#8220;workspace&#8221; directory can be mapped to a version controlled
+ repository. This raises the question of whether or not the
+ workspace (or repository) should contain everything, including
+ information currently stored in the <span 
+class="pcrr7t-">manifest.json </span>or
+ <span 
+class="pcrr7t-">environment.json</span>. This information is essential to the
+ understandability and re-executability of the tale, but is currently
+ modeled as external to the primary tale contents (as is common
+ with descriptive metadata). During the local execution process, for
+ technical reasons we bind mount files from the &#8220;metadata&#8221;
+ directory into the workspace to support building the tale image. In
+ future releases, we are considering exposing the manifest
+ information along with computational provenance information
+ (below) as part of the workspace instead of external to it. This
+ means that even simple metadata would be in the workspace and
+ easily added to version control.
+ </p><!--l. 397--><p class="indent" >
+ <a 
+ id="x1-67r4"></a>
+ </p><!--l. 397--><p class="noindent" ><span 
+class="ptmri7t-">D.  Reproducibility and computational provenance information</span>
+ <a 
+ id="Q1-1-4"></a>
+ </p><!--l. 398--><p class="indent" >  Computational provenance refers to methods of capturing
+ provenance (&#8220;the source or origin of an object&#8221;) for computational
+ tasks <span class="cite">&#x00A0;[<a 
+href="#Xfreire2008">10</a>]</span> and is a subset of the larger notion of reproducibility of
+ data- and computationally-enabled results <span class="cite">&#x00A0;[<a 
+href="#Xstodden2013a">15</a>,&#x00A0;<a 
+href="#Xstodden2014a">19</a>,&#x00A0;<a 
+href="#Xstodden2014b">17</a>,&#x00A0;<a 
+href="#Xstodden2015">20</a>,&#x00A0;<a 
+href="#Xstodden2016">18</a>]</span>.
+ We are beginning to explore methods of capturing and storing
+ computational provenance information to enable reproducibility on
+ computational findings in tales. In the RO-Bundle specification,
+ provenance information is defined as &#8220;describing creators, dates,
+ and sources&#8221; and is more concerned with the provenance of the
+ research object itself, which we term archival provenance.
+ Computational provenance information is internal to the tale and
+ could be generated by the user or the Whole Tale system directly.
+ We view computational provenance information as a key
+ component of transparency for evaluation and verification of tales
+ and part of enabling reproducibility.
+ </p><!--l. 400--><p class="indent" >
+ <a 
+ id="x1-68r5"></a>
+ </p><!--l. 400--><p class="noindent" ><span 
+class="ptmri7t-">E.  Supporting reproducibility via verification workflows</span>
+                                                                                                  
+                                                                                                  
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 401--><p class="indent" >  Research  communities  and  journals  are  increasingly
+adopting artifact review processes that include re-execution
+of  computational  analysis  in  support  of  reproducibility  <span class="cite">
+&#x00A0;[<a 
+href="#Xstodden2013b">16</a>]</span>. Examples include the workflow implemented by the
+Odum  Institute  for  the  American  Journal  for  Political
+Science  <span class="cite">&#x00A0;[<a 
+href="#Xchristian2018">7</a>]</span>,  the  Journal  of  the  American  Statistical
+Association<span class="footnote-mark"><a 
+href="#fn8x0" id="fn8x0-bk"><sup class="textsuperscript">8</sup></a></span><a 
+ id="x1-69f8"></a>,
+Biostatistics  <span class="cite">&#x00A0;[<a 
+href="#Xdonoho2010">9</a>]</span>,  and  the  ACM  Transactions  on
+Mathematical Software (TOMS) Replicated Computational
+Results<span class="footnote-mark"><a 
+href="#fn9x0" id="fn9x0-bk"><sup class="textsuperscript">9</sup></a></span><a 
+ id="x1-70f9"></a>
+program. We see tales and related research objects being used to
+simplify and possibly automate aspects of the verification
+process. Having a standard format for the exchange of research
+objects that fits into these enhanced curatorial and verification
+workflows may significantly reduce the burden on research
+communities.
+</p><!--l. 404--><p class="indent" >
+<a 
+ id="x1-71r6"></a>
+</p><!--l. 404--><p class="noindent" ><span 
+class="ptmri7t-">F.  BagIt Understandability</span>
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 406--><p class="indent" >  One drawback of the BagIt serialization is that the BagIt
+configuration is foregrounded and difficult to understand for
+the average researcher/user while the &#8220;payload&#8221; directory
+is less apparent and confusingly named &#8220;data&#8221;. Although
+out of scope for the RO discussion, we are supportive of
+the idea of a &#8220;.bagit&#8221; directory that contains the relevant
+configuration information and is largely hidden from the average
+user.
+</p><!--l. 413--><p class="indent" >
+<a 
+ id="x1-72r7"></a>
+</p><!--l. 413--><p class="noindent" ><span 
+class="ptmri7t-">G.  Migrating to RO-Crate</span>
+<a 
+ id="Q1-1-4"></a>
+</p><!--l. 414--><p class="indent" >  Since our adoption of the BagIt-RO model, the community has
+moved forward on the Research Object Crate (RO-Crate)
+specification<span class="footnote-mark"><a 
+href="#fn10x0" id="fn10x0-bk"><sup class="textsuperscript">10</sup></a></span><a 
+ id="x1-73f10"></a>.
+In this section, we report the results of a preliminary analysis of
+changes needed to migrate to the new format. Doing so will
+require versioning the tale export format and we are unlikely to
+make changes until the community settles on a near-final version
+of the specification.
+</p><!--l. 420--><p class="indent" >  RO-Crate 0.2-DRAFT introduces the following changes from
+the RO-Bundle 1.0 </p>
+    <ul class="itemize1">
+    <li class="itemize">Addition         of         <span 
+class="pcrr7t-">ro-crate-metadata.jsonld</span>
+    (RO-Crate   Metadata   File).   The   relationship   to   the
+    RO-Bundle   <span 
+class="pcrr7t-">manifest.json </span>is   unclear,   since   the
+    RO-Crate  Metadata  File  &#8220;does  not  necessarily  list  or
+    describe  all  files  in  the  package.&#8221;  We  have  viewed  the
+    <span 
+class="pcrr7t-">manifest.json </span>as an inventory of all files in the RO
+    (excluding those introduced by BagIt).
+    </li>
+    <li class="itemize">The  RO-Crate  metadata  file  changes  vocabulary  from
+    the  set  used  by  RO-Bundle  to  primarily  schema.org,  no
+    longer using <span 
+class="pcrr7t-">ore:aggregates</span>. This also adds support           for  referencing  external  datasets,  a  feature  not  available
+          in RO-Bundle but added in our tale format.
+          </li>
+          <li class="itemize">The                            &#8220;bagged&#8221;                            RO-Crate
+          structure  will  differ  from  the  BagIt-RO  structure  as  the
+          &#8220;metadata&#8221; folder is no longer included. Our assumption
+          is that the <span 
+class="pcrr7t-">ro-crate-metadata.jsonld </span>along with
+          our <span 
+class="pcrr7t-">environment.json </span>will now be included in the
+          BagIt payload. We&#8217;ve come to a similar conclusion about
+          the tale format &#8211; that this metadata belongs in the payload
+          not external to it.
+          </li>
+          <li class="itemize">It  is  unclear  whether  there  will  be  support  for  separate
+          provenance  metadata  or  whether  this  will  need  to  be
+          included in the payload.</li></ul>
+  <!--l. 428--><p class="indent" >    RO-Crate promises many benefits that align with Whole Tale,
+  namely the adoption of schema.org as the primary vocabulary and
+  its ability to be used alongside a variety of serialization
+  formats.
+  </p><!--l. 430--><p class="indent" >
+  <a 
+ id="x1-74r7"></a>
+  </p><!--l. 430--><p class="noindent" ><span 
+class="ptmrc7t-">VII.  C<span 
+class="small-caps">o</span><span 
+class="small-caps">n</span><span 
+class="small-caps">c</span><span 
+class="small-caps">l</span><span 
+class="small-caps">u</span><span 
+class="small-caps">s</span><span 
+class="small-caps">i</span><span 
+class="small-caps">o</span><span 
+class="small-caps">n</span><span 
+class="small-caps">s</span></span>
+  <a 
+ id="Q1-1-4"></a>
+  </p><!--l. 431--><p class="indent" >    By implementing an extension to RO-Bundle with BagIt
+  serialization and leveraging existing open science infrastructure
+  tools including repo2docker and BDBag, we were able to
+  effectively create an exportable, publishable, and executable
+  research object package, in short taking a step toward the
+  publication of &#8220;really reproducible research&#8221; <span class="cite">&#x00A0;[<a 
+href="#Xclaerbout1992">8</a>]</span>. While not a
+  perfect fit, BagIt-RO met many of our platform requirements. We
+  expect to continue work in this area as we add support for
+  computational provenance information and automated verification
+  and hope to contribute to the use cases and discussions that
+  inform the development of a broader community standard.
+  </p><!--l. 433--><p class="indent" >
+  </p><!--l. 433--><p class="noindent" ><span 
+class="ptmrc7t-">A<span 
+class="small-caps">c</span><span 
+class="small-caps">k</span><span 
+class="small-caps">n</span><span 
+class="small-caps">o</span><span 
+class="small-caps">w</span><span 
+class="small-caps">l</span><span 
+class="small-caps">e</span><span 
+class="small-caps">d</span><span 
+class="small-caps">g</span><span 
+class="small-caps">m</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">t</span></span>
+  </p><!--l. 435--><p class="indent" >    This work is supported by National Science Foundation Award
+  OAC-1541450.
+  </p><!--l. 1--><p class="indent" >
+  </p><!--l. 1--><p class="noindent" ><span 
+class="ptmrc7t-">R<span 
+class="small-caps">e</span><span 
+class="small-caps">f</span><span 
+class="small-caps">e</span><span 
+class="small-caps">r</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">c</span><span 
+class="small-caps">e</span><span 
+class="small-caps">s</span></span>
+  <a 
+ id="Q1-1-4"></a>
+  </p><!--l. 1--><p class="indent" >
+  <br/><span 
+class="ptmr7t-x-x-80">[1]</span>   <a 
+ id="Xboettiger2018"></a><span 
+class="ptmr7t-x-x-80">C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Boettiger  and  D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Eddelbuettel.   An  introduction  to  rocker:  Docker</span>
+            <span 
+class="ptmr7t-x-x-80">containers for R.  </span><span 
+class="ptmri7t-x-x-80">CoRR</span><span 
+class="ptmr7t-x-x-80">, abs/1710.03675, 2017.</span>
+	 <br/><span 
+class="ptmr7t-x-x-80">[2]</span>   <a 
+ id="Xbrinckman2019"></a><span 
+class="ptmr7t-x-x-80">A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Brinckman,      K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Chard,      N.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Gaffney,      M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Hategan,      M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;B.</span>
+            <span 
+class="ptmr7t-x-x-80">Jones,   K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kowalik,   S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kulasekaran,   B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Lud</span><span 
+class="ptmr7t-x-x-80">äscher,   B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;D.   Mecum,</span>
+            <span 
+class="ptmr7t-x-x-80">J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Nabrzyski,   et</span><span 
+class="ptmr7t-x-x-80">&#x00A0;al.      Computing   environments   for   reproducibility:</span>
+            <span 
+class="ptmr7t-x-x-80">Capturing  the  &#8220;whole  tale&#8221;.    </span><span 
+class="ptmri7t-x-x-80">Future  Generation  Computer  Systems</span><span 
+class="ptmr7t-x-x-80">,</span>
+            <span 
+class="ptmr7t-x-x-80">94:854&#8211;867, 2019.</span>
+			<br/><span 
+class="ptmr7t-x-x-80">[3]</span>   <a 
+ id="Xcameron2018"></a><span 
+class="ptmr7t-x-x-80">M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Cameron,    J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;London,    K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Frost,    A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Whiting,    and    P.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Boveng.</span>
+            <span 
+class="ptmr7t-x-x-80">Satellite  telemetry  dataset  (raw):  Juvenile  bearded  and  spotted  seals,</span>
+            <span 
+class="ptmr7t-x-x-80">2004-2006, kotzebue, alaska, 2018.</span>
+                                                                                                  
+                                                                                                  
+			<br/><span 
+class="ptmr7t-x-x-80">[4]</span> <a 
+ id="Xchard2016"></a><span 
+class="ptmr7t-x-x-80">K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Chard,                              M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;D&#8217;Arcy,                              B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Heavner,</span>
+   <span 
+class="ptmr7t-x-x-80">I.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Foster, C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kesselman, R.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Madduri, A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Rodriguez, S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Soiland-Reyes,</span>
+   <span 
+class="ptmr7t-x-x-80">C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Goble, K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Clark, E.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;W. Deutsch, I.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Dinov, N.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Price, and A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Toga.</span>
+   <span 
+class="ptmr7t-x-x-80">I&#8217;ll take that to go: Big data bags and minimal identifiers for exchange</span>
+   <span 
+class="ptmr7t-x-x-80">of large, complex datasets.  In </span><span 
+class="ptmri7t-x-x-80">2016 IEEE International Conference on</span>
+   <span 
+class="ptmri7t-x-x-80">Big Data (Big Data)</span><span 
+class="ptmr7t-x-x-80">, pages 319&#8211;328, Dec 2016.</span>
+ <br/><span 
+class="ptmr7t-x-x-80">[5]</span> <a 
+ id="Xchard2019"></a><span 
+class="ptmr7t-x-x-80">K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Chard,                                   N.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Gaffney,                                   M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;B.</span>
+   <span 
+class="ptmr7t-x-x-80">Jones, K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kowalik, B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Lud</span><span 
+class="ptmr7t-x-x-80">äscher, J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Nabrzyski, V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden, I.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Taylor,</span>
+   <span 
+class="ptmr7t-x-x-80">M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;J. Turk, and C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Willis.  Implementing computational reproducibility</span>
+   <span 
+class="ptmr7t-x-x-80">in the whole tale environment.  In </span><span 
+class="ptmri7t-x-x-80">Proceedings of the 2Nd International</span>
+   <span 
+class="ptmri7t-x-x-80">Workshop on Practical Reproducible Evaluation of Computer Systems</span><span 
+class="ptmr7t-x-x-80">,</span>
+   <span 
+class="ptmr7t-x-x-80">P-RECS &#8217;19, pages 17&#8211;22, New York, NY, USA, 2019. ACM.</span>
+   <br/><span 
+class="ptmr7t-x-x-80">[6]</span> <a 
+ id="XChirigati2016"></a><span 
+class="ptmr7t-x-x-80">F.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Chirigati,   R.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Rampin,   D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Shasha,   and   J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Freire.         Reprozip:</span>
+   <span 
+class="ptmr7t-x-x-80">Computational  reproducibility  with  ease.   In  </span><span 
+class="ptmri7t-x-x-80">Proceedings  of  the  2016</span>
+   <span 
+class="ptmri7t-x-x-80">International Conference on Management of Data</span><span 
+class="ptmr7t-x-x-80">, SIGMOD &#8217;16, pages</span>
+   <span 
+class="ptmr7t-x-x-80">2085&#8211;2088, New York, NY, USA, 2016. ACM.</span>
+   <br/><span 
+class="ptmr7t-x-x-80">[7]</span> <a 
+ id="Xchristian2018"></a><span 
+class="ptmr7t-x-x-80">T.-M.   Christian,   S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Lafferty-Hess,   W.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;G.   Jacoby,   and   T.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Carsey.</span>
+   <span 
+class="ptmr7t-x-x-80">Operationalizing the replication standard.  </span><span 
+class="ptmri7t-x-x-80">IJDC</span><span 
+class="ptmr7t-x-x-80">, 13(1):114&#8211;124, 2018.</span>
+ <br/><span 
+class="ptmr7t-x-x-80">[8]</span> <a 
+ id="Xclaerbout1992"></a><span 
+class="ptmr7t-x-x-80">J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;F.   Claerbout   and   M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Karrenbach.       Electronic   documents   give</span>
+   <span 
+class="ptmr7t-x-x-80">reproducible  research  a  new  meaning.    In  </span><span 
+class="ptmri7t-x-x-80">SEG  Technical  Program</span>
+   <span 
+class="ptmri7t-x-x-80">Expanded   Abstracts   1992</span><span 
+class="ptmr7t-x-x-80">,   pages   601&#8211;604.   Society   of   Exploration</span>
+   <span 
+class="ptmr7t-x-x-80">Geophysicists, 1992.  </span><a 
+href="https://doi.org/10.1190/1.1822162" ><span 
+class="ptmr7t-x-x-80">doi:10.1190/1.1822162</span></a><span 
+class="ptmr7t-x-x-80">.</span>
+ <br/><span 
+class="ptmr7t-x-x-80">[9]</span> <a 
+ id="Xdonoho2010"></a><span 
+class="ptmr7t-x-x-80">D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;L.  Donoho.   An  invitation  to  reproducible  computational  research.</span>
+   <span 
+class="ptmri7t-x-x-80">Biostatistics</span><span 
+class="ptmr7t-x-x-80">, 11(3):385&#8211;388, 07 2010.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[10]</span> <a 
+ id="Xfreire2008"></a><span 
+class="ptmr7t-x-x-80">J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Freire,   D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Koop,   E.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Santos,   and   C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;T.   Silva.      Provenance   for</span>
+   <span 
+class="ptmr7t-x-x-80">computational  tasks:  A  survey.     </span><span 
+class="ptmri7t-x-x-80">Computing  in  Science  and  Engg.</span><span 
+class="ptmr7t-x-x-80">,</span>
+   <span 
+class="ptmr7t-x-x-80">10(3):11&#8211;21, May 2008.</span>
+   <br/><span 
+class="ptmr7t-x-x-80">[11]</span> <a 
+ id="Xfursin2018"></a><span 
+class="ptmr7t-x-x-80">G.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Fursin,  A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Lokhmotov,  D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Savenko,  and  E.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Upton.    A  collective</span>
+   <span 
+class="ptmr7t-x-x-80">knowledge  workflow  for  collaborative  research  into  multi-objective</span>
+   <span 
+class="ptmr7t-x-x-80">autotuning  and  machine  learning  techniques.   </span><span 
+class="ptmri7t-x-x-80">CoRR</span><span 
+class="ptmr7t-x-x-80">,  abs/1801.08024,</span>
+   <span 
+class="ptmr7t-x-x-80">2018.</span>
+   </br><span 
+class="ptmr7t-x-x-80">[12]</span> <a 
+ id="Xlondon2018"></a><span 
+class="ptmr7t-x-x-80">J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;M.                           London                           and                           D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;S.</span>
+   <span 
+class="ptmr7t-x-x-80">Johnson.  Alaska bearded and spotted seal example dataset and analysis.</span>
+   <a 
+href="https://github.com/jmlondon/crwexampleakbs" class="url" ><span 
+class="ptmr7t-x-x-80">https://github.com/jmlondon/crwexampleakbs</span></a><span 
+class="ptmr7t-x-x-80">, 2019.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[13]</span> <a 
+ id="Xsoilandreyes2014"></a><span 
+class="ptmr7t-x-x-80">S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Soiland-Reyes, M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Gamble, and R.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Haines.  Research object bundle</span>
+   <span 
+class="ptmr7t-x-x-80">1.0,                           researchobject.org                           recommendation.</span>
+   <a 
+href="https://w3id.org/bundle/2014-11-05/" class="url" ><span 
+class="ptmr7t-x-x-80">https://w3id.org/bundle/2014-11-05/</span></a><span 
+class="ptmr7t-x-x-80">, 2014.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[14]</span> <a 
+ id="XStanford2016"></a><span 
+class="ptmr7t-x-x-80">N.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stanford,    F.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Bacall,    M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Golebiewski,    O.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Krebs,    R.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kuzyakiv,</span>
+   <span 
+class="ptmr7t-x-x-80">Q.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Nguyen,    S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Owen,    S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Soiland-Reyes,    J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Straszewski,    D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;van</span>
+   <span 
+class="ptmr7t-x-x-80">Niekerk,    A.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Williams,    K.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Wolstencroft,    L.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Malmstr</span><span 
+class="ptmr7t-x-x-80">öm,    B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Rinn,</span>
+   <span 
+class="ptmr7t-x-x-80">J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Snoep,  W.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;M</span><span 
+class="ptmr7t-x-x-80">üller,  and  C.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Goble.   Fairdom:  Reproducible  systems</span>
+   <span 
+class="ptmr7t-x-x-80">biology through fair asset management. 2016. Reproducibility, standards</span>
+   <span 
+class="ptmr7t-x-x-80">and  SOP  in  bioinformatics  :  Combined  CHARME  &#8211;  EMBnet  and</span>
+   <span 
+class="ptmr7t-x-x-80">NETTAB  2016  Workshop,  NETTAB  ;  Conference  date:  25-10-2016</span>
+   <span 
+class="ptmr7t-x-x-80">Through 26-10-2016.</span>
+   <br/><span 
+class="ptmr7t-x-x-80">[15]</span> <a 
+ id="Xstodden2013a"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden.   Reproducible  research:  tools  and  strategies  for  scientific</span>
+   <span 
+class="ptmr7t-x-x-80">computing.  </span><span 
+class="ptmri7t-x-x-80">Computing in Science and Engineering</span><span 
+class="ptmr7t-x-x-80">, 14:11&#8211;12, 2012.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[16]</span> <a 
+ id="Xstodden2013b"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden,  P.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Guo,  and  Z.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Ma.   Toward  reproducible  computational</span>
+   <span 
+class="ptmr7t-x-x-80">research:  an  empirical  analysis  of  data  and  code  policy  adoption  by</span>
+   <span 
+class="ptmr7t-x-x-80">journals.  </span><span 
+class="ptmri7t-x-x-80">PLOS ONE</span><span 
+class="ptmr7t-x-x-80">, 8(6):e67111, June 2013.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[17]</span> <a 
+ id="Xstodden2014b"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden,  F.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Leisch,  and  R.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;D.  Peng.   </span><span 
+class="ptmri7t-x-x-80">Implementing  Reproducible</span>
+   <span 
+class="ptmri7t-x-x-80">Research</span><span 
+class="ptmr7t-x-x-80">.  CRC Press, Apr. 2014.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[18]</span> <a 
+ id="Xstodden2016"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden,                                  M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;McNutt,                                  D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;H.</span>
+   <span 
+class="ptmr7t-x-x-80">Bailey, E.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Deelman, Y.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Gil, B.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Hanson, M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;A. Heroux, J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;P. Ioannidis,</span>
+   <span 
+class="ptmr7t-x-x-80">and  M.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Taufer.  Enhancing  reproducibility  for  computational  methods.</span>
+   <span 
+class="ptmri7t-x-x-80">Science</span><span 
+class="ptmr7t-x-x-80">, 354(6317):1240&#8211;1241, 2016.</span>
+<br/><span 
+class="ptmr7t-x-x-80">[19]</span> <a 
+ id="Xstodden2014a"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden  and  S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Miguez.   Best  practices  for  computational  science:</span>             <span 
+class="ptmr7t-x-x-80">Software infrastructure and environments for reproducible and extensible</span>
+            <span 
+class="ptmr7t-x-x-80">research.  </span><span 
+class="ptmri7t-x-x-80">Journal of Open Research Software</span><span 
+class="ptmr7t-x-x-80">, 2, 2014.</span>
+<br/>   <span 
+class="ptmr7t-x-x-80">[20]</span>   <a 
+ id="Xstodden2015"></a><span 
+class="ptmr7t-x-x-80">V.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Stodden,                   S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Miguez,                   and                   J.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Seiler.</span>
+            <span 
+class="ptmr7t-x-x-80">Researchcompendia.org:   Cyberinfrastructure   for   reproducibility   and</span>
+            <span 
+class="ptmr7t-x-x-80">collaboration  in  computational  science.    </span><span 
+class="ptmri7t-x-x-80">Computing  in  Science  and</span>
+            <span 
+class="ptmri7t-x-x-80">Engineering</span><span 
+class="ptmr7t-x-x-80">, 17(1):12&#8211;19, 2015.</span>
+<br/>   <span 
+class="ptmr7t-x-x-80">[21]</span>   <a 
+ id="XThat2017"></a><span 
+class="ptmr7t-x-x-80">D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;H.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;T.  That,  G.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Fils,  Z.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Yuan,  and  T.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Malik.    Sciunits:  Reusable</span>
+            <span 
+class="ptmr7t-x-x-80">research objects.  </span><span 
+class="ptmri7t-x-x-80">CoRR</span><span 
+class="ptmr7t-x-x-80">, abs/1707.05731, 2017.</span>
+<br/>   <span 
+class="ptmr7t-x-x-80">[22]</span>   <a 
+ id="XYuan2018"></a><span 
+class="ptmr7t-x-x-80">Z.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Yuan,  D.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;H.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;T.  That,  S.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Kothari,  G.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Fils,  and  T.</span><span 
+class="ptmr7t-x-x-80">&#x00A0;Malik.  Utilizing</span>
+            <span 
+class="ptmr7t-x-x-80">provenance in reusable research objects.  </span><span 
+class="ptmri7t-x-x-80">Informatics</span><span 
+class="ptmr7t-x-x-80">, 5:14, 2018.</span>
+   </p><!--l. 441--><p class="indent" >
+   <a 
+ id="x1-97r8"></a>
+   </p><!--l. 441--><p class="noindent" ><span 
+class="ptmrc7t-">VIII.  A<span 
+class="small-caps">p</span><span 
+class="small-caps">p</span><span 
+class="small-caps">e</span><span 
+class="small-caps">n</span><span 
+class="small-caps">d</span><span 
+class="small-caps">i</span><span 
+class="small-caps">x</span> A</span>
+  <a 
+ id="Q1-1-4"></a>
+  </p>
+      <!--l. 442-->
+  <div class="lstlisting" id="listing-5"><span class="label"><a 
+ id="x1-98r1"></a></span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-99r2"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">createdBy</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-100r3"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">Person</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-101r4"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">givenName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Craig</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-102r5"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">willis8@illinois</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">edu</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-103r6"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">email</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">willis8@illinois</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">edu</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-104r7"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">familyName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Willis</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-105r8"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-106r9"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">description</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Demonstration</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">of</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">how</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">to</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">use</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Whole</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Tale</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">to</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">develop</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">custom</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">analysis</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">and</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">visualization</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">for</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">published</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">externally</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">via</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">DataONE</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">See</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">wholetale</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">readthedocs</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">io</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">en</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">stable</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">users_guide</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">quickstart</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">html</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">for</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">more</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">information</span><span 
+class="pcrr7t-x-x-70">.",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-107r10"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@context</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-108r11"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">w3id</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">bundle</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">context</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-109r12"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-110r13"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">http</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-111r14"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-112r15"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-113r16"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Datasets</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-114r17"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-115r18"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-116r19"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-117r20"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">],</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-118r21"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">author</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-119r22"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-120r23"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">Person</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-121r24"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">givenName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Craig</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-122r25"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">orcid</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/0000-0002-6148-7196",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-123r26"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">familyName</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Willis</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-124r27"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-125r28"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">],</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-126r29"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">version</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">7,</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-127r30"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">identifier</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"5</span><span 
+class="pcrr7t-x-x-70">cb4ffead9323600016c4d4c</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-128r31"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">image</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">http</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">use</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">yt</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">upload</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">dc1da723</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-129r32"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Datasets</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-130r33"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-131r34"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Dataset</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-132r35"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">identifier</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-133r36"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">name</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Humans</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">and</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Hydrology</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">at</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">High</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Latitudes</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Water</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Use</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Information</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-134r37"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-135r38"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-136r39"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">],</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-137r40"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">createdOn</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"2019-04-15</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">22:04:26.970000",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-138r41"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">name</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Example</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Water</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">Tale</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-139r42"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">category</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">Examples</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-140r43"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">aggregates</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">[</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-141r44"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-142r45"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">wt_quickstart</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">ipynb</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-143r46"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-144r47"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-145r48"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">apt</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">txt</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-146r49"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-147r50"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-148r51"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">requirements</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">txt</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-149r52"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-150r53"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-151r54"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">workspace</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">postBuild</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-152r55"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-153r56"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-154r57"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">size</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">1558016,</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-155r58"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">isPartOf</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">doi</span><span 
+class="pcrr7t-x-x-70">:10.5065/</span><span 
+class="pcrr7t-x-x-70">D6862DM8</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-156r59"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">cn</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">dataone</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">cn</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">v2</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">resolve</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">urn</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">uuid</span><span 
+class="pcrr7t-x-x-70">:62</span><span 
+class="pcrr7t-x-x-70">e1a8c5</span><span 
+class="pcrr7t-x-x-70">-406</span><span 
+class="pcrr7t-x-x-70">b</span><span 
+class="pcrr7t-x-x-70">-43</span><span 
+class="pcrr7t-x-x-70">f9</span><span 
+class="pcrr7t-x-x-70">-9234-1415277674</span><span 
+class="pcrr7t-x-x-70">cb</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-157r60"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">bundledAs</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-158r61"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">filename</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">usco2000</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">xls</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-159r62"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">folder</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-160r63"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-161r64"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-162r65"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-163r66"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">license</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">CC</span><span 
+class="pcrr7t-x-x-70">-</span><span 
+class="pcrr7t-x-x-70">BY</span><span 
+class="pcrr7t-x-x-70">-4.0",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-164r67"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">LICENSE</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-165r68"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">},</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-166r69"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-167r70"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@type</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">schema</span><span 
+class="pcrr7t-x-x-70">:</span><span 
+class="pcrr7t-x-x-70">HowTo</span><span 
+class="pcrr7t-x-x-70">",</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-168r71"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">uri</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"../</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">README</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">md</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-169r72"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-170r73"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">],</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-171r74"></a></span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">@id</span><span 
+class="pcrr7t-x-x-70">":</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">https</span><span 
+class="pcrr7t-x-x-70">://</span><span 
+class="pcrr7t-x-x-70">data</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">wholetale</span><span 
+class="pcrr7t-x-x-70">.</span><span 
+class="pcrr7t-x-x-70">org</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">api</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">v1</span><span 
+class="pcrr7t-x-x-70">/</span><span 
+class="pcrr7t-x-x-70">tale</span><span 
+class="pcrr7t-x-x-70">/5</span><span 
+class="pcrr7t-x-x-70">cb4ffead9323600016c4d4c</span><span 
+class="pcrr7t-x-x-70">"</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-172r75"></a></span><span 
+class="pcrr7t-x-x-70">}</span><span 
+class="pcrr7t-x-x-70">&#x00A0;</span><br /><span class="label"><a 
+ id="x1-173r76"></a></span><span 
+class="pcrr7t-x-x-70">\</span><span 
+class="pcrr7t-x-x-70">end</span><span 
+class="pcrr7t-x-x-70">{</span><span 
+class="pcrr7t-x-x-70">verbatim</span><span 
+class="pcrr7t-x-x-70">}</span>
+ 
+  </div>
+  <div class="footnotes"><!--l. 124--><p class="indent" >  <span class="footnote-mark"><a 
+href="#fn1x0-bk" id="fn1x0"><sup class="textsuperscript">1</sup></a></span><span 
+class="ptmr7t-x-x-80">https://repo2docker.readthedocs.io/</span></p>
+<!--l. 143--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn2x0-bk" id="fn2x0"><sup class="textsuperscript">2</sup></a></span><span 
+class="ptmr7t-x-x-80">https://www.researchworkspace.com</span></p>
+<!--l. 185--><p class="noindent" ><span class="footnote-mark"><a 
+href="#fn3x0-bk" id="fn3x0"><sup class="textsuperscript">3</sup></a></span><span 
+class="ptmr7t-x-x-80">https://girder.readthedocs.io</span></p>
+<!--l. 201--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn4x0-bk" id="fn4x0"><sup class="textsuperscript">4</sup></a></span><span 
+class="ptmr7t-x-x-80">https://github.com/whole-tale/repo2docker</span><span 
+class="ptmr7t-x-x-80">_wholetale</span></p>
+<!--l. 222--><p class="noindent" ><span class="footnote-mark"><a 
+href="#fn5x0-bk" id="fn5x0"><sup class="textsuperscript">5</sup></a></span><span 
+class="ptmr7t-x-x-80">https://raw.githubusercontent.com/fair-research/bdbag/master/profiles/bdbag-ro-profile.json</span></p>
+<!--l. 367--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn6x0-bk" id="fn6x0"><sup class="textsuperscript">6</sup></a></span><span 
+class="ptmr7t-x-x-80">https://purl.dataone.org/provone-v1-dev</span></p>
+<!--l. 367--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn7x0-bk" id="fn7x0"><sup class="textsuperscript">7</sup></a></span><span 
+class="ptmr7t-x-x-80">https://www.w3.org/TR/prov-overview/</span></p>
+<!--l. 401--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn8x0-bk" id="fn8x0"><sup class="textsuperscript">8</sup></a></span><span 
+class="ptmr7t-x-x-80">https://magazine.amstat.org/blog/2016/07/01/jasa-reproducible16/</span></p>
+<!--l. 401--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn9x0-bk" id="fn9x0"><sup class="textsuperscript">9</sup></a></span><span 
+class="ptmr7t-x-x-80">http://toms.acm.org/replicated-computational-results.cfm</span></p>
+<!--l. 415--><p class="indent" >     <span class="footnote-mark"><a 
+href="#fn10x0-bk" id="fn10x0"><sup class="textsuperscript">10</sup></a></span><span 
+class="ptmr7t-x-x-80">https://researchobject.github.io/ro-crate/</span></p>                                                </div>
+ 
+</body></html> 
+
+                                                                                                  
+
+
