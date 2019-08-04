@@ -54,6 +54,12 @@ kowalikk@illinois.edu}\\
 Champaign, IL \\
 ludaesch@illinois.edu}\\
 
+\IEEEauthorblockN{Timothy McPhillips}
+\IEEEauthorblockA{\small{School of Information Sciences} \\
+\small{University of Illinois at Urbana-Champaign}\\
+Champaign, IL \\
+tmcphill@illinois.edu} \\
+
 \IEEEauthorblockN{Jarek Nabrzyski}
 \IEEEauthorblockA{\small{Center for Research Computing} \\
 \small{University of Notre Dame}\\
@@ -66,13 +72,15 @@ jaroslaw.nabrzyski.1@nd.edu}\\
 Champaign, IL \\
 vcs@stodden.net} \\
 
+
+\and
+
+
 \IEEEauthorblockN{Ian Taylor}
 \IEEEauthorblockA{\small{Center for Research Computing} \\
 \small{University of Notre Dame}\\
 South Bend, IN\\
 ian.j.taylor@gmail.com} \\
-
-\and
 
 \IEEEauthorblockN{Thomas Thelen}
 \IEEEauthorblockA{\small{NCEAS} \\
@@ -115,11 +123,11 @@ Reproducibility of results, Standards, Packaging, Interoperability, Software, Di
 
 \section{Introduction}
 
-Whole Tale (http://wholetale.org) is a web-based, open-source platform for reproducible research 
+Whole Tale (\url{http://wholetale.org}) is a web-based, open-source platform for reproducible research 
 supporting the creation, sharing, execution, and verification of ``tales" \cite{brinckman2019, chard2019}. Tales are executable research objects that capture the code, data, and environment along with narrative and workflow information needed to re-create computational results from scientific studies. A goal of the Whole Tale platform (WT) is to produce an archival package that is exportable, publishable, and can be used for verification of computational reproducibility, for example as part of the peer-review process.
 
 Since its inception, the Whole Tale platform has been designed to bring together existing open 
-science infrastructure.  Researchers can ingest existing data from various scientific archival 
+science infrastructure.  Researchers can ingest data from various scientific archival 
 repositories; launch popular analytical tools (such as Jupyter and RStudio); create and customize 
 computational environments (using \texttt{repo2docker}\footnote{https://repo2docker.readthedocs.io/}); 
 conduct analyses; create/upload code and data; and publish the resulting package back to an
@@ -140,7 +148,7 @@ our implementation in more detail followed by a discussion and conclusions.
 
 
 \section{Example scenario: Analyzing seal migration patterns} \label{scenario}
-We begin with a motivating example to illustrate the end-to-end Whole Tale workflow for creating, exporting, and publishing a tale based on existing data archived using the Research Workspace\footnote{https://www.researchworkspace.com}, a DataONE member node. This example is based tutorial material described in \cite{london2018}.
+We begin with a motivating example to illustrate the end-to-end Whole Tale workflow for creating, exporting, and publishing a tale based on existing data archived using the Research Workspace\footnote{https://www.researchworkspace.com}, a DataONE member node. This example is based on tutorial material described in \cite{london2018}.
 
 \begin{quote}
 A research team is preparing to publish a manuscript describing a computational model for 
@@ -162,9 +170,9 @@ This scenario is further illustrated in Figure \ref{workflow}.
 \begin{figure*}
 \centering
 \includegraphics[scale=0.6]{images/wholetale-workflow.pdf}
-\caption{Example Scenario Tale Creation and Publishing Workflow, republished from \cite{chard2019}, permission needed.}
-\end{figure*}
+\caption{Example Scenario Tale Creation and Publishing Workflow.}
 \label{workflow}
+\end{figure*}
 
 \section{System architecture} \label{architecture}
 
@@ -177,8 +185,8 @@ set of core services via REST APIs and Single Page Application (SPA). Key compon
 \centering
 \includegraphics[scale=0.25]{images/wholetale-architecture.png}
 \caption{Whole Tale system architecture}
-\end{figure}
 \label{architecture}
+\end{figure}
 
 \begin{itemize}
 \item{{\bf Whole Tale Dashboard}: An Ember.js single page application}
@@ -192,7 +200,7 @@ set of core services via REST APIs and Single Page Application (SPA). Key compon
 Several aspects of the Whole Tale system are related to the BagIt-RO serialization format including filesystem organization, user-defined environments, metadata as well as the export and publication functions. We describe these in more detail below.
 
 \subsubsection{Tale workspace}
-Each tale has a \emph{workspace} (folder) that contains user-created code, data, workflow, documentation and narrative information. The workspace also contains repo2docker-compatible configuration files defining the tale environment, described below. This appears as the \texttt{workspace} folder mounted into the running tale environment.
+Each tale has a \emph{workspace} (folder) that contains user-created code, data, workflow, documentation and narrative information. The workspace also contains repo2docker-compatible configuration files defining the tale environment, described below. This appears as the \texttt{workspace} folder mounted into the running tale environment (i.e., container)
 
 \subsubsection{External data}
 Optionally, each tale can include references to externally published data. The data is then registered with the Whole Tale system and managed by the DMS. Externally referenced data appears in the \texttt{data} folder, a sibling to the \texttt{workspace}.
@@ -207,7 +215,7 @@ Tales have basic descriptive metadata including creator, authors, title, descrip
 
 \subsubsection{Exporting tales}
 
-Tales can be exported in a BagIt-RO serialized archive that contains the contents of the tale workspace (code, local data, narrative, workflow, repo2docker configuration files) as well as references to external data, tale metadata, and a script to run the tale locally. BDBag \cite{chard2016} is used to materialize ``holey" bags by downloading files specified in the \texttt{fetch.txt} file, initially via HTTP and eventually via DOI, Globus, Agave schemes.  The script to run locally is stored at the root of the exported BagIt archive.
+Tales can be exported in a BagIt-RO serialized archive that contains the contents of the tale workspace (code, local data, narrative, workflow, repo2docker configuration files) as well as references to external data, tale metadata, and a script to run the tale locally. BDBag \cite{chard2016} is used to materialize ``holey" bags by downloading files specified in the \texttt{fetch.txt} file, initially via HTTP(S) and eventually via DOI, Globus, Agave schemes.  The script to run locally  (\texttt{run-local.sh}) is stored at the root of the exported BagIt archive.
 % "tale metadata, and a script to run the tale locally." where are these stored when the tale is published?
 
 Table 1 describes the contents of an exported tale in the BagIt-RO format. A complete example is available at \href{https://doi.org/10.5281/zenodo.2641314}{https://doi.org/10.5281/zenodo.2641314}.
@@ -263,29 +271,35 @@ metadata/
 The scenario described in section \ref{scenario} highlights several key requirements of the 
 Whole Tale platform that led to our selection of the BagIt-RO serialization.  These requirements include:
 
-\begin{itemize}
-\item{{\bf Interoperability with archival repositories}: Since tales will be published to archival repositories including DataONE network members, we must adopt standard formats and vocabularies that facilitate interoperability. This includes the use of supported archival formats and identifiers (e.g., digital object identifiers). We also note here that some repositories do not support publishing hierarchical file structures, while many research objects contain data and code organized in folders. In the future, we plan to support publishing to Dataverse network members, the Dryad repository, and Zenodo.}
-\item{{\bf Interoperability with source code management (SCM)}: For many researchers, source code repositories such as GitHub are central to their workflow in the creation of research objects. The tale format must support publishing research objects based on content in SCM repositories.}
-\item{{\bf Ability to reference external data}: A central feature of the Whole Tale platform is to enable researchers to reference externally published data by persistent identifier and include references to those items in their published tales. Both in the Whole Tale web service and when executed locally, externally referenced data must be resolved prior to re-execution. Whole Tale currently supports HTTP resources as well as those published via Globus and in the future via the Agave Platform.}
+\begin{enumerate}
+\item{{\bf Interoperability with archival repositories}: In the scenario, data is references from and the resulting tale published to an archival repository. In addition to DataONE network members, we are working on support for Dataverse network member, Dryad, and Zenodo. We must adopt standard formats and vocabularies to facilitate interoperability including the use of supported archival formats and identifiers (e.g., digital object identifiers).  In the future, we plan to support publishing to Dataverse network members, the Dryad repository, and Zenodo.}
+\item{{\bf Interoperability with source code management (SCM)}:  Github is central to the workflow for the researchers in the scenario. The tale format must support publishing research objects that are based on content managed in SCM repositories.}
+\item{{\bf Ability to reference external data}: The source dataset used in the scenario has been published in an archival repository. When running the tale via the Whole Tale web service or locally, externally referenced data must be resolved prior to re-execution. Whole Tale currently supports HTTP(S) resources as well as those published via Globus and in the future via the Agave Platform.}
 \item{{\bf Ability to add metadata}: The tale format must support all metadata attributes required by DataCite and schema.org as well as attributes specific to the Whole Tale platform. In the future, we expect to also support additional metadata required by researchers in specific domains.}
 \item{{\bf Ability to export and re-execute}: One feature of the system is the ability for users to export tales to a local machine. To re-run locally, we must be able to rebuild the environment (e.g., via Docker/repo2docker) and fetch remote data as needed.}
-\item{{\bf Ability to store provenance information}: Future releases of Whole Tale, tales will include computational and archival provenance information.}
 \item{{\bf Simplicity and understandability}: When users view the contents of an exported or published tale, they should be able to easily understand the contents and how to explore or re-execute the tale.}
-\item{{\bf Verifiability}: Future releases of Whole Tale will include information to allow the automatic re-execution and verification of included results/outputs and computational workflows.}
-\item{{\bf Versioning}: Since researchers iterate on their tales, share them and extend them, it is important to be able to version them over time.}
 \item{{\bf Interoperability with search engines}: Google recently unveiled Dataset Search which parses and aggregates JSON-LD embedded on dataset landing pages as an effort to lower barriers for finding datasets. Choosing JSON-LD as a representation for tale metadata provides flexibility in case we decide to expose tale information for Google. It also allows for further integration with third party publishers such as Dataverse and DataONE who may expose such metadata for Google.}
-\end{itemize}
+\end{enumerate}
+
+The following requirements will be addressed in future releases of Whole Tale and relate to our selection of the BagIt-RO serialization format:
+\begin{enumerate}
+\item{{\bf Ability to store provenance information}: Future releases of Whole Tale, tales will include computational and archival provenance information. We anticipate incorporating this information via standard models such as Prov-ONE \footnote{https://purl.dataone.org/provone-v1-dev}}
+\item{{\bf Verifiability}: Today, Whole Tale supports validation through re-execution of the tale via the web based service or after exporting locally. Future releases will include information to allow the automatic re-execution and verification of included results/outputs and computational workflows.}
+\item{{\bf Versioning}: Since researchers iterate on their tales, share them and extend them, it is important to be able to version them over time.}
+\end{enumerate}
+
+In the next section, we discuss our adoption of the BagIt-RO model.
 
 \section{Adopting the BagIt-RO Model} \label{adopting}
 
-Whole Tale uses the RDF data model to encode tale information for export and exchange. We selected  a JSON-LD representation for human readability, extensibility, compatibility with Whole Tale APIs, and potential interoperability with search engines and third party publishers. After developing an  ad-hoc internal format, we explored emerging standards in the research object space and settled on BagIt-RO for serialization. Using RO-Bundle specification and BagIt serialization in conjunction with the BDBag tools met many of our initial requirements. Additional tale metadata attributes which were not included in the BagIt-RO model could be added using vocabularies such as schema.org. Throughout this section, we use the \texttt{manifest.json} from the above example, with a complete listing included in Appendix A.
+Whole Tale uses the RDF data model to encode tale information for export and exchange. We selected  a JSON-LD representation for human readability, extensibility, compatibility with Whole Tale APIs, and potential interoperability with search engines and third party publishers. After developing an  ad-hoc internal format, we explored emerging standards in the research object space and settled on BagIt-RO for serialization. Using the RO-Bundle specification and BagIt serialization in conjunction with the BDBag tools met many of our initial requirements. Additional tale metadata attributes which were not included in the BagIt-RO model could be added using vocabularies such as schema.org. Throughout this section, we use the \texttt{manifest.json} from the above example, with a complete listing included in Appendix A.
 
 \subsection{Filesystem Artifacts}
 One strong point of RO-Bundle is that it treats file system artifacts as aggregates of the 
 manifest. Doing so satisfies our requirement of being able to track where files belong, enabling 
 us to both export and re-import tales even in the case where we must publish a hierarchical 
 structure to a repository that can only represent a flat structure. In the case of Whole Tale, 
-artifacts include data that were retrieved from external repositories as well as files that the user created or uploaded into the tale workspace. The tale workspace contents are included in the payload "data/workspace" directory and the external data are fetched into the payload "data/data" directory, mirroring filesystem organization on the web-based platform.
+artifacts include data that were retrieved from external repositories as well as files that the user created or uploaded into the tale workspace. The tale workspace contents are included in the payload \texttt{data/workspace} directory and the external data are fetched into the payload \texttt{data/data} directory, mirroring filesystem organization on the web-based platform.
 
 \begin{lstlisting}
   "aggregates": [
@@ -311,11 +325,11 @@ additional metadata specifies the ``type" of the file as a ``HowTo".
 
 \subsection{External data}
 
-Whole Tale supports two types of external data: data that reside in a repository identified by persistent identifier (e.g., DOI) and data that exists at a generic HTTP address. In addition to 
+Whole Tale supports two types of external data: data that reside in a repository identified by persistent identifier (e.g., DOI) and data that exists at a generic HTTP(S) address. In addition to 
 including information about external data in the \texttt{manifest.json}, the URL for each remote file, regardless of type, is included in the \texttt{fetch.txt} for retrieval using BDBag tools.
 
-{\bf Generic HTTP Data}:
-For data that does not belong to a remote repository, a simple bundle is created in the aggregation section. The URI points to the HTTP address where the file may be retrieved and the bundle object holds the filesystem relevant information. The combination of information allows us to retrieve the file and place it in the correct folder (i.e., data/data).
+{\bf Generic HTTP(S) Data}:
+For data that does not belong to a remote repository, a simple bundle is created in the aggregation section. The URI points to the HTTP(S) address where the file may be retrieved and the bundle object holds the information where the file should appear on the filesystem. This combination of information allows us to retrieve the file and place it in the correct folder (i.e., data/data).
 
 {\bf Repository Data}: 
 For datasets that have been published to research repositories, additional metadata can be ingested when files are registered with the system. The individual files are described with a single bundle object, and linked to an additional structure that describes the dataset in more detail.
@@ -345,10 +359,10 @@ retrieval in the payload "data" directory:
 \end{lstlisting}
 
 \subsection{Describing the Computing Environment}
-Whole Tale uses a customized version of the Binder repo2docker package. In addition to including configuration files in the workspace, Whole Tale exports information about the environment including runtime information in the tale. One shortcoming of the BagIt-RO model is that there is not a well-defined place for this metadata. To address this need, we define an additional tag file, \texttt{environment.json}, which encodes sufficient information about the environment  so that it can be re-created. The metadata contained in this file is represented as JSON and is not described using standard vocabularies. 
+Whole Tale uses a customized version of the Binder repo2docker package. In addition to including configuration files in the workspace, Whole Tale exports information about the environment including runtime information in the tale. One shortcoming of the BagIt-RO model is that there is not a well-defined place for this metadata. To address this need, we define an additional tag file, \texttt{environment.json}, which encodes sufficient information about the environment  so that it can be re-created. The metadata contained in this file is represented as JSON and is not yet described using standard vocabularies due as we were unable to identify a suitable convention.
 
 \subsection{Describing Additional Attributes}
-A number of properties that describe additional tale attributes (e.g., authors, keywords, description, license) are defined at the manifest root. Schema.org's vocabulary sufficed for describing these general metadata fields.
+A number of properties that describe additional tale attributes (e.g., authors, keywords, description, license) are defined at the manifest root. Schema.org's vocabulary is used to describe these general metadata fields.
 
 Attributing authorship to a tale is a requirement for tracking researcher contributions and is also used during metadata generation with publishers. The Provenance, Authoring, and Versioning (PAV) vocabulary is used instead of schema because it is already included in by RO-Bundle: 
 
@@ -364,7 +378,7 @@ Attributing authorship to a tale is a requirement for tracking researcher contri
 		
 \subsection{Provenance Tracking}
 
-A planned feature of Whole Tale is the ability to track executions and steps in researchers' workflows, which we call computational provenance. The BagIt-RO model includes the ability to provide provenance information through the inclusion of the \texttt{provenance.json} file. However, this is intended to capture more archival provenance information and it is unclear whether computational provenance should be included here. Whole Tale plans to use the Prov-ONE ontology\footnote{https://purl.dataone.org/provone-v1-dev}, an extension to W3C PROV\footnote{https://www.w3.org/TR/prov-overview/}.
+A planned feature of Whole Tale is the ability to track executions and steps in researchers' workflows based on techniques used to capture computational provenance \cite{Chirigati2016,That2017,Yuan2018}. The BagIt-RO model includes the ability to provide provenance information through the inclusion of the \texttt{provenance.json} file. However, this is intended to capture more archival provenance information and it is unclear whether computational provenance should be included here. Whole Tale plans to use the Prov-ONE ontology\footnote{https://purl.dataone.org/provone-v1-dev}, an extension to W3C PROV\footnote{https://www.w3.org/TR/prov-overview/}.
 
 The URI of each file in the manifest can be referenced inside the \texttt{provenance.json} file, enabling rich linkings of information. This information can also be transcribed to publisher-specific formats, provided that they support PROV. Figure \ref{prov-fig} illustrates how provenance information is rendered in DataONE.
 
@@ -381,14 +395,14 @@ The URI of each file in the manifest can be referenced inside the \texttt{proven
 In this section, we highlight and discuss several issues related to our implementation of BagIt-RO that we hope will be of interest to workshop participants and possible input into current work on the RO-Crate specification. We discuss the importance of re-executability; the ability to reference and retrieve external data; the relationship between tales and source control repositories; and our ongoing work on computational provenance and verification workflows.
 
 \subsection{Executable research objects}
-Tales are executable research objects. By this we mean that the research object itself may be built and re-executed for exploration, re-use, reproducibility, and verification. This is not a unique capability as many systems have recently been developed to support the creation of similar artifacts (for example Binder, CodeOcean). Executable research objects contain not only data, code, and documentation, but also information about the computational environment. This executability leads to additional capabilities, such as generation and comparison of computational provenance or methods of automated verification.
+Tales are executable research objects. By this we mean that the research object itself may be built and re-executed for exploration, re-use, reproducibility, and verification. This is not a unique capability as many systems have recently been developed to support the creation of similar artifacts \cite{Chirigati2016, Binder2018, Yuan2018}. Executable research objects contain not only data, code, and documentation, but also information about the computational environment. This executability leads to additional capabilities, such as generation and comparison of computational provenance or methods of automated verification.
 
 The FAIRDOM infrastructure initiative has made use of the Research Object framework to employ a standards based method to group its components into container platforms including BagIt \cite{Stanford2016}. We extend this approach into the Whole Tale framework and include the capability for externally referenced data and general research pipelines. Our efforts are more general than ReproZip, which gathers and bundles dependencies for command line executions \cite{Chirigati2016}. The Collective Knowledge (CK) framework gathers research objects with unique IDs and metadata in the JSON format but does not ensure re-executability \cite{fursin2018}. Sciunits on the other hand are self-contained bundles guaranteed to re-execute regardless of deployment, and targeted at scientific experiments \cite{That2017, Yuan2018}.
 
 \subsection{External data}
 In the Whole Tale platform, users are presented with a fixed filesystem hierarchy that includes  ``workspace'' and ``data'' directories. The workspace directory contains code, local data, and additional files (e.g., documentation) and the sibling "data" directory contains externally referenced data files (read-only).
 
-In our v0.7 release, the BagIt payload directory of an exported tale similarly contains ``workspace'' and ``data'' directories. The \texttt{manifest.json} contains information about remotely registered datasets that is also included in the BagIt \texttt{fetch.txt}. When BDBag tools are used to fetch remote datasets, they are downloaded to the payload/data directory, matching the online filesystem organization and system capabilities. The concept of the \texttt{fetch.txt}, while primitive, is surprisingly effective when used with BDBag. We also foresee taking advantage of other BDBag capabilities, such as transferring Globus data or using DOI resolution. However, there is redundancy in tracking external information in both in the BagIt \texttt{fetch.txt} and the RO manifest.json. 
+In our v0.7 release, the BagIt payload directory of an exported tale similarly contains ``workspace'' and ``data'' directories. The \texttt{manifest.json} contains information about remotely registered datasets that is also included in the BagIt \texttt{fetch.txt}. When BDBag tools are used to fetch remote datasets, they are downloaded to the payload/data directory, matching the online filesystem organization and system capabilities. The concept of the \texttt{fetch.txt}, while primitive, is surprisingly effective when used with BDBag. We also foresee taking advantage of other BDBag capabilities, such as transferring Globus data or using DOI resolution. However, there is redundancy in tracking external information in both in the BagIt \texttt{fetch.txt} and the RO \texttt{manifest.json}. 
 
 \subsection{Relationship to SCM}
 Many researchers use source control repositories (e.g., GitHub) to organize and collaborate on research projects. Repositories can be released and published via external tools such as Zenodo or Whole Tale. In the Whole Tale platform, the ``workspace'' directory can be mapped to a version controlled repository. This raises the question of whether or not the workspace (or repository) should contain everything, including information currently stored in the \texttt{manifest.json} or \texttt{environment.json}. This information is essential to the understandability and re-executability of the tale, but is currently modeled as external to the primary tale contents (as is common with descriptive metadata). During the local execution process, for technical reasons we bind mount files from the ``metadata'' directory into the workspace to support building the tale 
@@ -404,8 +418,8 @@ Research communities and journals are increasingly adopting artifact review proc
 \subsection{BagIt Understandability}
 
 One drawback of the BagIt serialization is that the BagIt configuration is foregrounded and 
-difficult to understand for the average researcher/user while the ``payload" directory is less 
-apparent and confusingly named ``data". Although out of scope for the RO discussion, we are 
+difficult to understand for the average researcher/user while the ``payload" directory, which contains
+their work, is less apparent and confusingly named ``data". Although out of scope for the RO discussion, we are 
 supportive of the idea of a ``.bagit" directory that contains the relevant configuration 
 information and is largely hidden from the average user.
 
@@ -417,7 +431,7 @@ of changes needed to migrate to the new format. Doing so will require versioning
 format and we are unlikely to make changes until the community settles on a near-final version of the 
 specification.
 
-RO-Crate 0.2-DRAFT introduces the following changes from the RO-Bundle 1.0
+RO-Crate 0.2-DRAFT introduces the following changes from the RO-Bundle 1.0:
 \begin{itemize}
 \item{Addition of \texttt{ro-crate-metadata.jsonld }(RO-Crate Metadata File). The relationship to the RO-Bundle \texttt{manifest.json} is unclear, since the RO-Crate Metadata File ``does not necessarily list or describe all files in the package.'' We have viewed the \texttt{manifest.json} as an inventory of all files in the RO (excluding those introduced by BagIt).}
 \item{The RO-Crate metadata file changes vocabulary from the set used by RO-Bundle to primarily schema.org, no longer using \texttt{ore:aggregates}. This also adds support for referencing external datasets, a feature not available in RO-Bundle but added in our tale format.}
@@ -515,7 +529,6 @@ This work is supported by National Science Foundation Award OAC-1541450.
     ],
     "@id": "https://data.wholetale.org/api/v1/tale/5cb4ffead9323600016c4d4c"
 }
-\end{verbatim}
 \end{lstlisting}
 
 
