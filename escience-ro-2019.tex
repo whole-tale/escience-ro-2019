@@ -95,14 +95,12 @@ Champaign, IL \\
 mjturk@illinois.edu} \\
 
 \IEEEauthorblockN{Craig Willis\IEEEauthorrefmark{2}}
-\IEEEauthorblockA{\small{NCSA} \\
+\IEEEauthorblockA{\small{School of Information Sciences} \\
 \small{University of Illinois at Urbana-Champaign}\\
 Champaign, IL\\
 willis8@illinois.edu}\\ 
 \IEEEauthorrefmark{2}\footnotesize{\emph{Corresponding author}}
 }
-
-% BL: push test (ignore)
 
 \maketitle
 
@@ -117,17 +115,14 @@ of our implementation, and discuss migrating to the emerging Research Object Cra
 standard.
 \end{abstract}
 
-% BL: unified capitalization of keywords 
 \begin{IEEEkeywords}
 Reproducibility of Results, Standards, Packaging, Interoperability, Software, Digital Preservation
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-% BL: We introduce "WT" in the next para, but then never seem to use it .. 
-
 Whole Tale (\url{http://wholetale.org}) is a web-based, open-source platform for reproducible research 
-supporting the creation, sharing, execution, and verification of ``tales" \cite{brinckman2019, chard2019}. Tales are executable research objects that capture the code, data, and environment along with narrative and workflow information needed to re-create computational results from scientific studies. A goal of the Whole Tale platform (WT) is to produce an archival package that is exportable, publishable, and can be used for verification of computational reproducibility, for example as part of the peer-review process.
+supporting the creation, sharing, execution, and verification of ``tales" \cite{brinckman2019, chard2019}. Tales are executable research objects that capture the code, data, and environment along with narrative and workflow information needed to re-create computational results from scientific studies. A goal of the Whole Tale platform is to produce an archival package that is exportable, publishable, and can be used for verification of computational reproducibility, for example as part of the peer-review process.
 
 Since its inception, the Whole Tale platform has been designed to bring together existing open 
 science infrastructure.  Researchers can ingest data from various scientific archival 
@@ -142,7 +137,6 @@ serialization with our repo2docker-based execution framework and the BDBag tools
 \cite{chard2016}, we were able to define and implement a standards-compliant, self-describing, 
 portable, re-executable research object with the ability to retrieve remotely published data.  
 
-% BL: capitalizing proper names (Section I, II ..)
 In this paper we describe the Whole Tale platform and requirements that led to our adoption of the
 the BagIt-RO format. The paper is organized as follows. In Section \ref{scenario}, we present a 
 motivating example of the  use of the Whole Tale platform followed by a brief description of the 
@@ -220,11 +214,6 @@ Tales have basic descriptive metadata including creator, authors, title, descrip
 \subsubsection{Exporting tales}
 
 
-% BL: There was a footnote linking to the bdbag-ro-profile.json which
-% was NOT working => I moved the footnote out of the table and
-% adjusted the footnote to make it work. Note: otherwise we would have
-% had the rather surprising sequence of footnotes 1,2,3,4,6, .. 
-% see: the missing footnote 5 in the earlier version: https://github.com/whole-tale/escience-ro-2019/blob/c706e8b16d801132b75c8aa0733dd0a7a46680bd/escience-ro-2019.pdf
 Tales can be exported in a BagIt-RO serialized archive that contains
 the contents of the tale workspace (code, local data, narrative,
 workflow, repo2docker configuration files) as well as references to
@@ -292,21 +281,17 @@ Whole Tale platform that led to our selection of the BagIt-RO serialization.  Th
 \item{{\bf Interoperability with archival repositories}: In the
     scenario, data is referenced from and the resulting tale published
     to an archival repository. In addition to DataONE network members,
-% BL: should be Dataverse network members [note the plural] ? 
-    we are working on support for Dataverse network member, Dryad, and
+    we are working on support for Dataverse network members, Dryad, and
     Zenodo. We must adopt standard formats and vocabularies to
     facilitate interoperability including the use of supported
     archival formats and identifiers (e.g., digital object
-    identifiers).  
-% BL: the next sentence seems to be redundant with the previous one !? 
-In the future, we plan to support publishing to
-    Dataverse network members, the Dryad repository, and Zenodo.} 
+		identifiers).} 
 \item{{\bf Interoperability with source code management (SCM)}:  Github is central to the workflow for the researchers in the scenario. The tale format must support publishing research objects that are based on content managed in SCM repositories.}
 \item{{\bf Ability to reference external data}: The source dataset used in the scenario has been published in an archival repository. When running the tale via the Whole Tale web service or locally, externally referenced data must be resolved prior to re-execution. Whole Tale currently supports HTTP(S) resources as well as those published via Globus and in the future via the Agave Platform.}
 \item{{\bf Ability to add metadata}: The tale format must support all
-    metadata attributes required by DataCite and schema.org as well as
+	metadata attributes required by DataCite
+		(\url{https://schema.datacite.org}) and schema.org (\url{https://schema.org/Dataset}) as well as
     attributes specific to the Whole Tale platform. 
-% BL: Should add refs to DataCite and schema.org in the preceeding sentence, right? 
  In the future, we expect to also support additional metadata required by researchers in specific domains.}
 \item{{\bf Ability to export and re-execute}: One feature of the system is the ability for users to export tales to a local machine. To re-run locally, we must be able to rebuild the environment (e.g., via Docker/repo2docker) and fetch remote data as needed.}
 \item{{\bf Simplicity and understandability}: When users view the contents of an exported or published tale, they should be able to easily understand the contents and how to explore or re-execute the tale.}
@@ -422,7 +407,6 @@ information through the inclusion of the \texttt{provenance.json}
 file. However, this is intended to capture more archival provenance
 information and it is unclear whether computational provenance should
 be included here. 
-% BL: We cite Prov-ONE twice in footnotes => turned into proper ref.
 Whole Tale plans to use the ProvONE model \cite {ProvONE}, an
 extension to W3C
 PROV\footnote{\url{https://www.w3.org/TR/prov-overview/}} derived from
@@ -459,17 +443,11 @@ components into container platforms including BagIt
 \cite{Stanford2016}. We extend this approach into the Whole Tale
 framework and include the capability for externally referenced data
 and general research pipelines. 
-% Our efforts are more general than ReproZip, which gathers and bundles
-% dependencies for command line executions \cite{Chirigati2016}.
-% BL: I tried to soften the "more general than" claim a bit as
-% follows: 
 Our efforts generalize those of ReproZip, which gathers and bundles
 dependencies for command line executions \cite{Chirigati2016}.
 The Collective Knowledge (CK) framework gathers research objects with
 unique IDs and metadata in the JSON format but does not ensure
 re-executability \cite{fursin2018}. Sciunits on the other hand are
-% self-contained bundles guaranteed to re-execute regardless of  
-% BL: I softened the guaranteed here as follows: 
 self-contained bundles aimed to re-execute regardless of  
 deployment, and targeted at scientific experiments \cite{That2017,
   Yuan2018}.
