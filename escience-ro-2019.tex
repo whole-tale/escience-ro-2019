@@ -8,7 +8,6 @@
 \usepackage{xcolor}
 \usepackage{fancyvrb}
 \usepackage{listings}
-\usepackage{hyperref}
 \usepackage{times}
 \usepackage{letltxmacro}
 
@@ -121,13 +120,13 @@ Reproducibility of Results, Standards, Packaging, Interoperability, Software, Di
 
 \section{Introduction}
 
-Whole Tale (\url{http://wholetale.org}) is a web-based, open-source platform for reproducible research 
+Whole Tale (http://wholetale.org) is a web-based, open-source platform for reproducible research 
 supporting the creation, sharing, execution, and verification of ``tales" \cite{brinckman2019, chard2019}. Tales are executable research objects that capture the code, data, and environment along with narrative and workflow information needed to re-create computational results from scientific studies. A goal of the Whole Tale platform is to produce an archival package that is exportable, publishable, and can be used for verification of computational reproducibility, for example as part of the peer-review process.
 
 Since its inception, the Whole Tale platform has been designed to bring together existing open 
 science infrastructure.  Researchers can ingest data from various scientific archival 
 repositories; launch popular analytical tools (such as Jupyter and RStudio); create and customize 
-computational environments (using \texttt{repo2docker}\footnote{\url{https://repo2docker.readthedocs.io/}}); 
+computational environments (using \texttt{repo2docker}\footnote{https://repo2docker.readthedocs.io/}); 
 conduct analyses; create/upload code and data; and publish the resulting package back to an
 archival repository. Tales are also downloadable and re-executable locally, including the 
 ability to retrieve remotely published data.  
@@ -146,7 +145,7 @@ our implementation in more detail followed by a discussion and conclusions.
 
 
 \section{Example scenario: Analyzing seal migration patterns} \label{scenario}
-We begin with a motivating example to illustrate the end-to-end Whole Tale workflow for creating, exporting, and publishing a tale based on existing data archived using the Research Workspace\footnote{\url{https://www.researchworkspace.com}}, a DataONE member node. This example is based on tutorial material described in \cite{london2018}.
+We begin with a motivating example to illustrate the end-to-end Whole Tale workflow for creating, exporting, and publishing a tale based on existing data archived using the Research Workspace\footnote{https://www.researchworkspace.com}, a DataONE member node. This example is based on tutorial material described in \cite{london2018}.
 
 \begin{quote}
 A research team is preparing to publish a manuscript describing a computational model for 
@@ -188,7 +187,7 @@ set of core services via REST APIs and Single Page Application (SPA). Key compon
 
 \begin{itemize}
 \item{{\bf Whole Tale Dashboard}: An Ember.js single page application}
-\item{{\bf Whole Tale API}: A REST API built using the Girder\footnote{\url{https://girder.readthedocs.io}} framework to expose key features including authentication, user/group management, tale lifecycle, data management, and integration with remote repositories}
+\item{{\bf Whole Tale API}: A REST API built using the Girder\footnote{https://girder.readthedocs.io} framework to expose key features including authentication, user/group management, tale lifecycle, data management, and integration with remote repositories}
 \item{{\bf Whole Tale File System}: A custom filesystem based on WebDav and FUSE used to mount user and registered data into running container environments}
 \item{{\bf Image registry}: A local Docker registry used to host images associated with tales}
 \item{{\bf Jobs and task Management}: A task distribution and notification framework based on Girder and Celery}
@@ -204,7 +203,7 @@ Each tale has a \emph{workspace} (folder) that contains user-created code, data,
 Optionally, each tale can include references to externally published data. The data is then registered with the Whole Tale system and managed by the DMS. Externally referenced data appears in the \texttt{data} folder, a sibling to the \texttt{workspace}.
 
 \subsubsection{Environment customization}
-Users can optionally customize the tale environment using repo2docker-compatible configuration files. Whole Tale extends repo2docker via the \texttt{repo2docker\_wholetale}\footnote{\url{https://github.com/whole-tale/repo2docker_wholetale}} package, which adds buildpacks to support Rocker, Spark, and OpenRefine images. 
+Users can optionally customize the tale environment using repo2docker-compatible configuration files. Whole Tale extends repo2docker via the \texttt{repo2docker\_wholetale}\footnote{https://github.com/whole-tale/repo2docker\_wholetale} package, which adds buildpacks to support Rocker, Spark, and OpenRefine images. 
 
 \subsubsection{Metadata}
 
@@ -221,10 +220,10 @@ external data, tale metadata, and a script to run the tale
 locally. BDBag \cite{chard2016} is used to materialize ``holey" bags
 by downloading files specified in the \texttt{fetch.txt} file,
 initially via HTTP(S) and eventually via DOI, Globus, Agave
-schemes.\footnote {BagIt-Profile-Info example available at \url{https://raw.githubusercontent.com/fair-research/bdbag/master/profiles/bdbag-ro-profile.json}}  The script to run locally  (\texttt{run-local.sh}) is stored at the root of the exported BagIt archive.
+schemes.\footnote {BagIt-Profile-Info example available at https://raw.githubusercontent.com/fair-research/bdbag/master/profiles/bdbag-ro-profile.json}  The script to run locally  (\texttt{run-local.sh}) is stored at the root of the exported BagIt archive.
 % "tale metadata, and a script to run the tale locally." where are these stored when the tale is published?
 
-Table \ref{tab-tale-contents} describes the contents of an exported tale in the BagIt-RO format. A complete example is available at \href{https://doi.org/10.5281/zenodo.2641314}{https://doi.org/10.5281/zenodo.2641314}.
+Table \ref{tab-tale-contents} describes the contents of an exported tale in the BagIt-RO format. A complete example is available at \texttt{https://doi.org/10.5281/zenodo.2641314}.
 % readers will wonder about the tale license and where that information is located
 
 
@@ -290,7 +289,7 @@ Whole Tale platform that led to our selection of the BagIt-RO serialization.  Th
 \item{{\bf Ability to reference external data}: The source dataset used in the scenario has been published in an archival repository. When running the tale via the Whole Tale web service or locally, externally referenced data must be resolved prior to re-execution. Whole Tale currently supports HTTP(S) resources as well as those published via Globus and in the future via the Agave Platform.}
 \item{{\bf Ability to add metadata}: The tale format must support all
 	metadata attributes required by DataCite
-		(\url{https://schema.datacite.org}) and schema.org (\url{https://schema.org/Dataset}) as well as
+		(https://schema.datacite.org) and schema.org (https://schema.org/Dataset) as well as
     attributes specific to the Whole Tale platform. 
  In the future, we expect to also support additional metadata required by researchers in specific domains.}
 \item{{\bf Ability to export and re-execute}: One feature of the system is the ability for users to export tales to a local machine. To re-run locally, we must be able to rebuild the environment (e.g., via Docker/repo2docker) and fetch remote data as needed.}
@@ -409,7 +408,7 @@ information and it is unclear whether computational provenance should
 be included here. 
 Whole Tale plans to use the ProvONE model \cite {ProvONE}, an
 extension to W3C
-PROV\footnote{\url{https://www.w3.org/TR/prov-overview/}} derived from
+PROV\footnote{https://www.w3.org/TR/prov-overview/} derived from
 an earlier version \cite{missier2013dprov}, combining retrospective
 provenance and workflow models.
 
@@ -465,7 +464,7 @@ image. In future releases, we are considering exposing the manifest information 
 Computational provenance refers to methods of capturing provenance (``the source or origin of an object") for computational tasks \cite{freire2008} and is a subset of the larger notion of reproducibility of data- and computationally-enabled results \cite{stodden2013a, stodden2014a, stodden2014b, stodden2015, stodden2016}. We are beginning to explore methods of capturing and storing computational provenance information to enable reproducibility on computational findings in tales. In the RO-Bundle specification, provenance information is defined as ``describing creators, dates, and sources'' and is more concerned with the provenance of the research object itself, which we term archival provenance. Computational provenance information is internal to the tale and could be generated by the user or the Whole Tale system directly. We view computational provenance information as a key component of transparency for evaluation and verification of tales and part of enabling reproducibility.
 
 \subsection{Supporting reproducibility via verification workflows}
-Research communities and journals are increasingly adopting artifact review processes that include re-execution of computational analysis in support of reproducibility \cite{stodden2013b}. Examples include the workflow implemented by the Odum Institute for the American Journal for Political Science \cite{christian2018}, the Journal of the American Statistical Association\footnote{\url{https://magazine.amstat.org/blog/2016/07/01/jasa-reproducible16/}}, Biostatistics \cite{donoho2010}, and the ACM Transactions on Mathematical Software (TOMS) Replicated Computational Results\footnote{\url{http://toms.acm.org/replicated-computational-results.cfm}} program. We see tales and related research objects being used to simplify and possibly automate aspects of the verification process. Having a standard format for the exchange of research objects that fits into these enhanced curatorial and verification workflows may significantly reduce the burden on research communities.
+Research communities and journals are increasingly adopting artifact review processes that include re-execution of computational analysis in support of reproducibility \cite{stodden2013b}. Examples include the workflow implemented by the Odum Institute for the American Journal for Political Science \cite{christian2018}, the Journal of the American Statistical Association\footnote{https://magazine.amstat.org/blog/2016/07/01/jasa-reproducible16/}, Biostatistics \cite{donoho2010}, and the ACM Transactions on Mathematical Software (TOMS) Replicated Computational Results\footnote{http://toms.acm.org/replicated-computational-results.cfm} program. We see tales and related research objects being used to simplify and possibly automate aspects of the verification process. Having a standard format for the exchange of research objects that fits into these enhanced curatorial and verification workflows may significantly reduce the burden on research communities.
 
 
 \subsection{BagIt Understandability}
@@ -479,7 +478,7 @@ information and is largely hidden from the average user.
 
 \subsection{Migrating to RO-Crate}
 Since our adoption of the BagIt-RO model, the community has moved forward on the Research Object 
-Crate (RO-Crate) specification\footnote{\url{https://researchobject.github.io/ro-crate/}}. In this section, we report the results of a preliminary analysis 
+Crate (RO-Crate) specification\footnote{https://researchobject.github.io/ro-crate/}. In this section, we report the results of a preliminary analysis 
 of changes needed to migrate to the new format. Doing so will require versioning the tale export 
 format and we are unlikely to make changes until the community settles on a near-final version of the 
 specification.
